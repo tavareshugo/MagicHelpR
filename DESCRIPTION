@@ -1,0 +1,14 @@
+Package: MagicHelpR
+Title: Analyse data from MAGIC lines.
+Version: 0.0.0.9000
+Authors@R: person("Hugo", "Tavares", email = "hugo.tavares@slcu.cam.ac.uk", role = c("aut", "cre"))
+Description: This package contains a series of simple functions to aid in
+    analysing data from Arabidopsis MAGIC lines.
+Depends:
+    dplyr,
+    tidyr
+License: CC0
+Encoding: UTF-8
+LazyData: true
+Requires: happy.hbrem
+RoxygenNote: 5.0.1
