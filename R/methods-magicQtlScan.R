@@ -2,7 +2,7 @@
 #'
 #' @param x an object of class MagicData.
 #' @param phenotype to run QTL analysis on.
-#' @param covariates optional vector or matrix of covariates. Default: NULL
+#' @param covariates optional name of column(s) from phenotypes to use as covariate(s). Default: NULL
 #' @param snp_cond optional ID of marker to use as covariate in the model. Default: NULL
 #' @param h1 optional optional model to test. Need to provide `h0` as well. Default: NULL
 #' @param h0 optional optional null model to test against. Need to provide `h1` as well. Default: NULL
@@ -28,12 +28,16 @@ setMethod("magicQtlScan", "MagicGen",
 					function(x, phenotype, covariates = NULL, snp_cond = NULL, 
 									 h1 = NULL, h0 = NULL, perm = NULL, cores = 1){
 	
+	cat("Phenotype:", phenotype, "\n")
+	
 	# Get marker and genotype information
 	markers <- getMarkers(x)
 	genotypes <- getGenotypes(x)
 	
-	# Get phenotype information
-	phenotype <- getPhenotypes(x)[, phenotype]
+	# Get phenotype and covariate information
+	phenotype <- as.matrix(getPhenotypes(x)[, phenotype])
+	
+	if(!is.null(covariates)) covariates <- as.matrix(getPhenotypes(x)[, covariates])
 	
 	# Check if there is a SNP to add to the model
 	if(!is.null(snp_cond)){
@@ -69,12 +73,15 @@ setMethod("magicQtlScan", "MagicGen",
 	if(!is.null(perm)){
 		cat("Performing", perm, "permutations. This might take a while...\n")
 		
-		# Sample phenotypes
-		perm_pheno <- replicate(perm, sample(phenotype))
-		
+		# Shuffle phenotypes and covariates
+		perm_index <- replicate(perm, sample(length(phenotype)))
+
 		# Run QTL scan on each permuted phenotype (shows a progress bar)
-		qtl_perm <- plyr::adply(perm_pheno, 2, allSnpScan, 
-														.progress = "text", .id = "perm_rep")
+		qtl_perm <- plyr::adply(perm_index, 2, function(i){
+			phenotype <- phenotype[i]
+			covariates <- covariates[i, ]
+			allSnpScan(PHEN = phenotype, COV = covariates)
+			}, .progress = "text", .id = "perm_rep")
 		
 		# Get the maximum F value for each permutation
 		max_f <- qtl_perm %>%
@@ -84,7 +91,7 @@ setMethod("magicQtlScan", "MagicGen",
 		
 		# Get a genome-wide p-value by checking how many times 
 		# the observed F is below the permuted F
-		qtl_scan$p_genome_perm <- sapply(qtl_scan$f, function(x, max_f) sum(x < max_f)+1, max_f)/(perm+1)
+		qtl_scan$p_perm <- sapply(qtl_scan$f, function(x, max_f) sum(x < max_f)+1, max_f)/(perm+1)
 	}
 	
 	return(qtl_scan)
@@ -108,13 +115,13 @@ setMethod("magicQtlScan", "MagicGen",
 			stop("Both h1 or h0 have to be specified.")
 		}
 		
-		cat("Fitting the models:\nH1:", h1, "\nH0:", h0, "\n")
+		cat("F-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
 		
 		return(list(h1 = h1, h0 = h0))
 		
 	} else if(is.null(COV) & is.null(SNP)){
 		
-		cat("Testing the models:\nH1: PHEN ~ GEN\nH0: PHEN ~ 1\n")
+		cat("F-test comparing the models:\nH1: PHEN ~ GEN\nH0: PHEN ~ 1\n")
 		
 		h1 <- "PHEN ~ GEN"
 		h0 <- "PHEN ~ 1"
@@ -132,7 +139,7 @@ setMethod("magicQtlScan", "MagicGen",
 			h0 <- paste0(h0, "SNP")
 		}
 		
-		cat("Fitting the models:\nH1:", h1, "\nH0:", h0, "\n")
+		cat("F-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
 	}
 	
 	return(list(h1 = h1, h0 = h0))
@@ -154,6 +161,7 @@ setMethod("magicQtlScan", "MagicGen",
 	
 	return(data.frame(f = anova(fit0, fit1)[[5]][2],
 										p = anova(fit0, fit1)[[6]][2],
-										r2 = summary(fit1)$adj.r.squared))
+										r2_h1 = summary(fit1)$adj.r.squared,
+										r2_h0 = summary(fit0)$adj.r.squared))
 }
 

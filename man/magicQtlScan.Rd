@@ -17,7 +17,7 @@ magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
 
 \item{phenotype}{to run QTL analysis on.}
 
-\item{covariates}{optional vector or matrix of covariates. Default: NULL}
+\item{covariates}{optional name of column(s) from phenotypes to use as covariate(s). Default: NULL}
 
 \item{snp_cond}{optional ID of marker to use as covariate in the model. Default: NULL}
 

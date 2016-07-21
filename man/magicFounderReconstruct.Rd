@@ -21,7 +21,9 @@ magicFounderReconstruct(ped, map, alleles, phenotypes, id)
 an object of type "MagicGen"
 }
 \description{
-Calculate MAGIC founder genotype probabilities
+This function calls the function `happy.hbrem::happy()` to calculate 
+the probability matrix of descent from each founder of the MAGIC lines
+at each marker SNP.
 }
 \examples{
 ...
