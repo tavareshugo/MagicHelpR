@@ -127,16 +127,19 @@ setMethod("magicQtlScan", "MagicGen",
 		h0 <- "PHEN ~ 1"
 
 	} else {
-		h1 <- paste0("PHEN ~ GEN + ")
+		h1 <- paste0("PHEN ~ GEN")
 		h0 <- paste0("PHEN ~ ")
 		
 		if(!is.null(COV)){
-			h1 <- paste0(h1, "COV")
+			h1 <- paste0(h1, " + COV")
 			h0 <- paste0(h0, "COV")
 		}
 		if(!is.null(SNP)){
-			h1 <- paste0(h1, "SNP")
-			h0 <- paste0(h0, "SNP")
+			h1 <- paste0(h1, " + SNP")
+			if(!is.null(COV)){
+				h0 <- paste0(h0, " + SNP")
+			} else{ h0 <- paste0(h0, "SNP") }
+			
 		}
 		
 		cat("F-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
