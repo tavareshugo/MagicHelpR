@@ -70,28 +70,30 @@ setMethod("magicQtlScan", "MagicGen",
 	
 	
 	##### Permutations #####
-	if(!is.null(perm)){
+	if(!is.null(perm) & perm > 0){
 		cat("Performing", perm, "permutations. This might take a while...\n")
 		
 		# Shuffle phenotypes and covariates
 		perm_index <- replicate(perm, sample(length(phenotype)))
 
 		# Run QTL scan on each permuted phenotype (shows a progress bar)
-		qtl_perm <- plyr::adply(perm_index, 2, function(i){
+		qtl_perm <- plyr::adply(perm_index, 2, function(i, phenotype, covariates){
 			phenotype <- phenotype[i]
 			covariates <- covariates[i, ]
 			allSnpScan(PHEN = phenotype, COV = covariates)
-			}, .progress = "text", .id = "perm_rep")
+			}, phenotype, covariates, .progress = "text", .id = "perm_rep")
 		
-		# Get the maximum F value for each permutation
-		max_f <- qtl_perm %>%
+		# Get the minimum p-value for each permutation
+		## Note: before I was taking the max F-value, but degrees freedom 
+		## vary when there is multicolinearity in genotype matrix
+		min_p <- qtl_perm %>%
 			group_by(perm_rep) %>%
-			summarise(max_f = max(f)) %>%
-			.$max_f
-		
+			summarise(min_p = min(p)) %>%
+			.$min_p
+
 		# Get a genome-wide p-value by checking how many times 
-		# the observed F is below the permuted F
-		qtl_scan$p_perm <- sapply(qtl_scan$f, function(x, max_f) sum(x < max_f)+1, max_f)/(perm+1)
+		# the observed p is above the permuted p
+		qtl_scan$p_perm <- sapply(qtl_scan$p, function(x, min_p) sum(x > min_p)+1, min_p)/(perm+1)
 	}
 	
 	return(qtl_scan)
