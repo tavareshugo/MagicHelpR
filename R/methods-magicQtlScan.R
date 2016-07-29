@@ -164,8 +164,12 @@ setMethod("magicQtlScan", "MagicGen",
 	fit1 <- lm(as.formula(h1))
 	fit0 <- lm(as.formula(h0))
 	
-	return(data.frame(f = anova(fit0, fit1)[[5]][2],
-										p = anova(fit0, fit1)[[6]][2],
+	qtl_aov <- anova(fit0, fit1)
+
+	return(data.frame(f = qtl_aov$F[2],
+										df1 = qtl_aov$Df[2],
+										df2 = qtl_aov$Res.Df[2],
+										p = qtl_aov$`Pr(>F)`[2],
 										r2_h1 = summary(fit1)$adj.r.squared,
 										r2_h0 = summary(fit0)$adj.r.squared))
 }
