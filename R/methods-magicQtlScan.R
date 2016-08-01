@@ -70,7 +70,7 @@ setMethod("magicQtlScan", "MagicGen",
 	
 	
 	##### Permutations #####
-	if(!is.null(perm) | perm > 0){
+	if(!is.null(perm)) if(perm > 0){
 		cat("Performing", perm, "permutations. This might take a while...\n")
 		
 		# Shuffle phenotypes and covariates
