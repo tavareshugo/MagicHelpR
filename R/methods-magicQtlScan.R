@@ -13,7 +13,7 @@
 #'
 #' @rdname magicQtlScan
 setGeneric("magicQtlScan", function(x, phenotype, covariates = NULL, snp_cond = NULL, 
-																		h1 = NULL, h0 = NULL, perm = NULL, cores = 1) 
+																		h1 = NULL, h0 = NULL, perm = 0, cores = 1) 
 	standardGeneric("magicQtlScan"))
 
 
@@ -26,62 +26,51 @@ setGeneric("magicQtlScan", function(x, phenotype, covariates = NULL, snp_cond = 
 #' ...
 setMethod("magicQtlScan", "MagicGen", 
 					function(x, phenotype, covariates = NULL, snp_cond = NULL, 
-									 h1 = NULL, h0 = NULL, perm = NULL, cores = 1){
+									 h1 = NULL, h0 = NULL, perm = 0, cores = 1){
 	
-	cat("Phenotype:", phenotype, "\n")
 	
-	# Get marker and genotype information
-	markers <- getMarkers(x)
-	genotypes <- getGenotypes(x)
+	# Prepare variables for model
+	model_vars <- .prepareModelVariables(x, phenotype, covariates, snp_cond)
 	
-	# Get phenotype and covariate information
-	phenotype <- as.matrix(getPhenotypes(x)[, phenotype])
+	# Prepare model formulas for `lm`, based on user inputs
+	qtl_models <- .makeQtlModel(phenotype, covariates, snp_cond, h1, h0)
 	
-	if(!is.null(covariates)) covariates <- as.matrix(getPhenotypes(x)[, covariates])
-	
-	# Check if there is a SNP to add to the model
-	if(!is.null(snp_cond)){
-		if(snp_cond %in% names(genotypes)){
-			
-			if(length(snp_cond) > 2) stop("Only one SNP can be added to the model.")
-			snp_cond <- genotypes[[snp_cond]]
-			
-		} else {
-			stop("SNP was not found in genotype matrices")
-		}
-	}
-	
-	# Model formulas for `lm`, based on user inputs
-	qtl_models <- .makeQtlModel(covariates, snp_cond, h1, h0)
-	
-	# Function to fit the linear model to all SNPs in parallel
-	allSnpScan <- function(PHEN = phenotype, GEN = genotypes, COV = covariates,
-												 SNP = snp_cond, H1 = qtl_models$h1, H0 = qtl_models$h0, Cores = cores){
-		parallel::mclapply(GEN, .qtlFit, PHEN, COV, SNP, H1, H0, 
+	# Function to fit the linear model to all SNPs using parallel mclapply
+	allSnpScan <- function(VARS = model_vars, GEN = getGenotypes(x), 
+												 H1 = qtl_models$h1, H0 = qtl_models$h0, Cores = cores){
+		parallel::mclapply(GEN, .qtlFit, VARS, H1, H0, 
 											 mc.cores = Cores) %>%
 			bind_rows(.id = "marker")
 	}
 	
 	# Fit linear model to all SNPs
+	t1 <- proc.time()  # to report time taken
 	qtl_scan <- allSnpScan()
+	t2 <- proc.time() - t1
+	cat("Elapsed time: ", t2[3], "seconds\n")
 	
 	# Merge with marker table to get coordinates of each marker
-	qtl_scan <- merge(markers, qtl_scan)
+	qtl_scan <- merge(getMarkers(x), qtl_scan)
 	
 	
 	##### Permutations #####
-	if(!is.null(perm)) if(perm > 0){
+	if(perm > 0){
 		cat("Performing", perm, "permutations. This might take a while...\n")
 		
 		# Shuffle phenotypes and covariates
-		perm_index <- replicate(perm, sample(length(phenotype)))
+		perm_index <- replicate(perm, sample(length(model_vars[[phenotype]])))
 
 		# Run QTL scan on each permuted phenotype (shows a progress bar)
-		qtl_perm <- plyr::adply(perm_index, 2, function(i, phenotype, covariates){
-			phenotype <- phenotype[i]
-			covariates <- covariates[i, ]
-			allSnpScan(PHEN = phenotype, COV = covariates)
-			}, phenotype, covariates, .progress = "text", .id = "perm_rep")
+		qtl_perm <- plyr::adply(perm_index, 2, function(i, model_vars){
+			# First shuffle the co-variates
+			model_vars <- lapply(model_vars, function(x){
+				if(is.vector(x)) return(x[i])
+				if(is.matrix(x)) return(x[i,])
+			})
+			
+			# Now run QTL model with shuffled variables
+			allSnpScan(VARS = model_vars)
+			}, model_vars, .progress = "text", .id = "perm_rep")
 		
 		# Get the minimum p-value for each permutation
 		## Note: before I was taking the max F-value, but degrees freedom 
@@ -101,13 +90,36 @@ setMethod("magicQtlScan", "MagicGen",
 })
 
 
+
+.prepareModelVariables <- function(x, phenotype, covariates, snp_cond){
+	
+	# Check that all requested variables exist
+	if(!(phenotype %in% colnames(getPhenotypes(x)))) stop("Phenotype ", phenotype, " does not exist.")
+	if(any(!(covariates %in% colnames(getPhenotypes(x))))) stop("Some covariates do not exist.")
+	if(any(!(snp_cond %in% names(getGenotypes(x))))) stop("Some specified snp_cond do not exist.")
+	
+	# Make lists of phenotype, covariates and snp matrices
+	phenotype_list <- lapply(phenotype, function(i, x) getPhenotypes(x)[,i], x = x)
+	covariates_list <- lapply(covariates, function(i, x) getPhenotypes(x)[,i], x = x)
+	snp_list <- lapply(snp_cond, function(i, x) getGenotypes(x)[[i]], x = x)
+	
+	# Concatenate the lists and name elements appropriately
+	model_vars <- c(phenotype_list, covariates_list, snp_list)
+	names(model_vars) <- c(phenotype, covariates, snp_cond)
+	
+	return(model_vars)
+	
+}
+
+
+
 #' Specify the null and alternative models for QTL scan
 #' 
 #' @param COV covariates
 #' @param SNP snp genotype probabilities
 #' @param h1 alternative model
 #' @param h0 null model
-.makeQtlModel <- function(COV, SNP, h1, h0){
+.makeQtlModel <- function(phenotype, covariates, snp_cond, h1, h0){
 	
 	# Check if user specified their own models
 	if(any(!is.null(h1), !is.null(h0))){
@@ -117,38 +129,41 @@ setMethod("magicQtlScan", "MagicGen",
 			stop("Both h1 or h0 have to be specified.")
 		}
 		
-		cat("F-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
+		cat("\nF-test comparing the models:\nH1: ", h1, "\nH0: ", h0, "\n")
 		
 		return(list(h1 = h1, h0 = h0))
 		
-	} else if(is.null(COV) & is.null(SNP)){
+	} else if(is.null(covariates) & is.null(snp_cond)){
 		
-		cat("F-test comparing the models:\nH1: PHEN ~ GEN\nH0: PHEN ~ 1\n")
+		h1 <- paste(phenotype, "~ GEN")
+		h0 <- paste(phenotype, "~ 1")
 		
-		h1 <- "PHEN ~ GEN"
-		h0 <- "PHEN ~ 1"
-
+		cat("\nF-test comparing the models:\nH1: ", h1, "\nH0: ", h0, "\n")
+		
 	} else {
-		h1 <- paste0("PHEN ~ GEN")
-		h0 <- paste0("PHEN ~ ")
+		h1 <- paste0(phenotype, " ~ GEN")
+		h0 <- paste0(phenotype, " ~ ")
 		
-		if(!is.null(COV)){
-			h1 <- paste0(h1, " + COV")
-			h0 <- paste0(h0, "COV")
+		if(!is.null(covariates)){
+			COV <- paste(covariates, collapse = " + ")
+			h1 <- paste(h1, "+", COV)
+			h0 <- paste0(h0, COV)
 		}
-		if(!is.null(SNP)){
-			h1 <- paste0(h1, " + SNP")
-			if(!is.null(COV)){
-				h0 <- paste0(h0, " + SNP")
-			} else{ h0 <- paste0(h0, "SNP") }
+		if(!is.null(snp_cond)){
+			SNP <- paste(snp_cond, collapse = " + ")
+			h1 <- paste0(h1, " + ", SNP)
+			if(!is.null(covariates)){
+				h0 <- paste0(h0, " + ", SNP)
+			} else{ h0 <- paste0(h0, SNP) }
 			
 		}
 		
-		cat("F-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
+		cat("\nF-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
 	}
 	
 	return(list(h1 = h1, h0 = h0))
 }
+
 
 
 #' Fit a linear model to genotype data
@@ -159,10 +174,10 @@ setMethod("magicQtlScan", "MagicGen",
 #' @param SNP snp ID to use as covariate.
 #'
 #' @return data.frame with test results.
-.qtlFit <- function(GEN, PHEN, COV, SNP, h1, h0){
+.qtlFit <- function(GEN, model_vars, h1, h0){
 	
-	fit1 <- lm(as.formula(h1))
-	fit0 <- lm(as.formula(h0))
+	fit1 <- with(model_vars, lm(as.formula(h1)))
+	fit0 <- with(model_vars, lm(as.formula(h0)))
 	
 	qtl_aov <- anova(fit0, fit1)
 
