@@ -7,10 +7,10 @@
 \title{Make a QTL scan}
 \usage{
 magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
-  h0 = NULL, perm = NULL, cores = 1)
+  h0 = NULL, perm = 0, cores = 1)
 
 \S4method{magicQtlScan}{MagicGen}(x, phenotype, covariates = NULL,
-  snp_cond = NULL, h1 = NULL, h0 = NULL, perm = NULL, cores = 1)
+  snp_cond = NULL, h1 = NULL, h0 = NULL, perm = 0, cores = 1)
 }
 \arguments{
 \item{x}{an object of class MagicData.}
@@ -19,7 +19,7 @@ magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
 
 \item{covariates}{optional name of column(s) from phenotypes to use as covariate(s). Default: NULL}
 
-\item{snp_cond}{optional ID of marker to use as covariate in the model. Default: NULL}
+\item{snp_cond}{optional ID of marker(s) to use as covariate(s) in the model. Default: NULL}
 
 \item{h1}{optional optional model to test. Need to provide `h0` as well. Default: NULL}
 
@@ -27,7 +27,7 @@ magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
 
 \item{perm}{optional number of permutations to run. If provided will permute the phenotypes 
 the number of requested times and then run the QTL scan. It will add a new column to
-the output with a genome-wide p-value (proportion of times where observed F < permuted F). Default: NULL}
+the output with a genome-wide p-value (proportion of times where observed p > permuted p). Default: 0}
 
 \item{cores}{number of cores to use (Windows only supports 1 core). Default: 1}
 }

@@ -1,7 +1,7 @@
 Package: MagicHelpR
-Title: Analysis data from MAGIC lines.
+Title: Analyse data from MAGIC lines.
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: person("Hugo", "Tavares", email = "hugo.tavares@slcu.cam.ac.uk", role = c("aut", "cre"))
 Description: This package contains a series of simple functions to aid in
     analysing data from Arabidopsis MAGIC lines.
 Depends:

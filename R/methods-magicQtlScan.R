@@ -3,12 +3,12 @@
 #' @param x an object of class MagicData.
 #' @param phenotype to run QTL analysis on.
 #' @param covariates optional name of column(s) from phenotypes to use as covariate(s). Default: NULL
-#' @param snp_cond optional ID of marker to use as covariate in the model. Default: NULL
+#' @param snp_cond optional ID of marker(s) to use as covariate(s) in the model. Default: NULL
 #' @param h1 optional optional model to test. Need to provide `h0` as well. Default: NULL
 #' @param h0 optional optional null model to test against. Need to provide `h1` as well. Default: NULL
 #' @param perm optional number of permutations to run. If provided will permute the phenotypes 
 #' the number of requested times and then run the QTL scan. It will add a new column to
-#' the output with a genome-wide p-value (proportion of times where observed F < permuted F). Default: NULL
+#' the output with a genome-wide p-value (proportion of times where observed p > permuted p). Default: 0
 #' @param cores number of cores to use (Windows only supports 1 core). Default: 1
 #'
 #' @rdname magicQtlScan
@@ -91,6 +91,14 @@ setMethod("magicQtlScan", "MagicGen",
 
 
 
+#' Internal MagicHelpR function
+#' 
+#' Make a list of the variables to include in the linear model
+#'
+#' @param x object of class MagicGen
+#' @param phenotype phenotype variable
+#' @param covariates covariate variables
+#' @param snp_cond covariate SNPs
 .prepareModelVariables <- function(x, phenotype, covariates, snp_cond){
 	
 	# Check that all requested variables exist
@@ -113,10 +121,13 @@ setMethod("magicQtlScan", "MagicGen",
 
 
 
-#' Specify the null and alternative models for QTL scan
+#' Internal MagicHelpR function
 #' 
-#' @param COV covariates
-#' @param SNP snp genotype probabilities
+#' Specify the null and alternative models for QTL scan.
+#' 
+#' @param phenotype phenotype variable
+#' @param covariates covariate variables
+#' @param snp_cond IDs of SNPs to use as covariates
 #' @param h1 alternative model
 #' @param h0 null model
 .makeQtlModel <- function(phenotype, covariates, snp_cond, h1, h0){
@@ -169,9 +180,9 @@ setMethod("magicQtlScan", "MagicGen",
 #' Fit a linear model to genotype data
 #'
 #' @param GEN genotype matrix.
-#' @param PHEN phenotype vector.
-#' @param COV covariate matrix or vector.
-#' @param SNP snp ID to use as covariate.
+#' @param model_vars list of variables to include in model.
+#' @param h1 alternative model.
+#' @param h0 null model.
 #'
 #' @return data.frame with test results.
 .qtlFit <- function(GEN, model_vars, h1, h0){
