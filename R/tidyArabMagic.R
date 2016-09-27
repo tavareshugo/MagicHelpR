@@ -210,6 +210,7 @@ tidyArabMagic <- function(snp_dir){
 	
 	# If any alleles are not in common between the .alleles and .map files
 	# Remove them from the ped file
+	# Some of these occur because they have no basepair coordinates
 	miss_allele <- which(!(markers %in% map$marker))
 	markers <- markers[-miss_allele]
 	
