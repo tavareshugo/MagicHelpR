@@ -25,11 +25,13 @@ tidyArabMagic <- function(snp_dir){
 	}
 	
 	
-	##### Make file names reflect format #####
+	##### Rename files to reflect format #####
+	# Rename to include "happy" in the file  format
 	file.rename(map_files, gsub("\\.map", "\\.happy\\.map", map_files))
 	file.rename(ped_files, gsub("\\.data", "\\.happy\\.data", ped_files))
 	file.rename(alleles_files, gsub("\\.alleles", "\\.happy\\.alleles", alleles_files))
 	
+	# Make variables with these file names
 	ped_files <- file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.happy.data"))
 	alleles_files <- file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.happy.alleles"))
 	map_files <- file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.happy.map"))
@@ -56,7 +58,7 @@ tidyArabMagic <- function(snp_dir){
 
 	##### Combine .happy.map files #####
 	# Combine happy.map files
-	lapply(map_files, read.table, header = T) %>%
+	lapply(map_files, read.table, header = T, stringsAsFactors = F) %>%
 		bind_rows() %>%
 		write.table(file.path(snp_dir, "all_chr.MAGIC.happy.map"), 
 								quote = F, row.names = F, sep = "\t")
@@ -65,6 +67,11 @@ tidyArabMagic <- function(snp_dir){
 	###### Combine .happy.alleles files ######
 	# Read all files
 	alleles_read <- lapply(alleles_files, readLines)
+	
+	# Fix marker MN1_21908389
+	## This has an extra column in the probabilities for allele C
+	i <- grep("MN1_21908389", alleles_read[[1]])
+	alleles_read[[1]][i+2] <- "allele\tC\t0\t0.083\t0\t0.083\t0.083\t0\t0.083\t0.083\t0\t0.083\t0.083\t0\t0.083\t0.083\t0.083\t0.083\t0\t0\t0.083"
 	
 	# Extract the total number of SNPs
 	tot_alleles <- sapply(alleles_read, function(x) strsplit(x[1], "\t")[[1]][2]) %>%
@@ -87,7 +94,7 @@ tidyArabMagic <- function(snp_dir){
 	###### Combine .happy.data files ######
 	# Read ped files (excluding columns 1:6)
 	# and combine by column
-	ped_read <- lapply(ped_files, function(x) read.table(x)[-c(1:6)]) %>%
+	ped_read <- lapply(ped_files, function(x) read.table(x)[, -c(1:6)]) %>%
 		bind_cols()
 	
 	# Output file adding the first 6 columns from one of the files
@@ -97,7 +104,8 @@ tidyArabMagic <- function(snp_dir){
 	
 	
 	##### Combine plink.map files ####
-	all_map <- lapply(file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.plink.map")), read.table, header = F) %>%
+	all_map <- lapply(file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.plink.map")), 
+										read.table, header = F, stringsAsFactors = F) %>%
 		bind_rows() 
 	
 	write.table(all_map, file.path(snp_dir, "all_chr.MAGIC.plink.map"), 
@@ -117,34 +125,73 @@ tidyArabMagic <- function(snp_dir){
 	
 	
 	###### Convert Founder Genotypes to plink ######
+	# Founder genomes are "reconstructed" from the alleles files
+	alleles_read <- readLines(file.path(snp_dir, "all_chr.MAGIC.happy.alleles"))
 	
-	founders <- read.table(file.path(snp_dir, 'founders.genotypes.txt'), header = T)
+	# For each marker present in the MAGIC lines, extract the allele of each accession
+	## Some are missing!
+	founder_geno <- lapply(all_map$V2, function(marker, alleles_read){
+		
+		# Get founder names
+		founder_id <- unlist(strsplit(alleles_read[2], "\t"))[-1]
+		
+		# Read the genotype probabilities
+		alleles <- alleles_read[grep(marker, alleles_read) + 2:3]
+		
+		# Stop if the marker was not found
+		if(length(alleles) == 0) stop(paste("Missing marker", marker))
+		
+		# Convert to data.frame (using read.table for this)
+		alleles <- read.table(text = alleles, fill = NA, stringsAsFactors = F)[, -1]
+		
+		# Stop if the number of columns is not as expected
+		if(ncol(alleles) > 20) stop(paste(marker, "Too many probabilities present in file"))
+		
+		# Name the columns with each accession ID
+		names(alleles) <- c("allele", founder_id)
+		
+		# Get the allele from each accession
+		alleles <- alleles %>%
+			gather("accession", "prob", Bur:Zu) %>%
+			group_by(accession) %>%
+			summarise(allele = ifelse(sum(prob) == 0, "0", allele[which.max(prob)]))
+		
+		# Issue warning if the number of alleles is not as expected
+		if(sum(grepl("o", alleles$allele)) > 19) warning(paste(marker, "too many founder alleles!"))
+		if(sum(grepl("o", alleles$allele)) < 19) warning(paste(marker, "missing some founder genotypes"))
+		
+		# Returna  data.frame with marker name, accession and two columns with the allele
+		return(data.frame(marker = marker, acc = alleles$accession, 
+											allele1 = alleles$allele, 
+											allele2 = alleles$allele))
+		
+	}, alleles_read)
 	
-	# Need to fix some SNP names which are wrong
-	colnames(founders) <- gsub("\\.", "_", colnames(founders))
+	# Make the .ped file - first 6 columns
+	ped_founders <- data.frame(fid = founder_geno[[1]]$acc,
+						 iid = founder_geno[[1]]$acc,
+						 dad = 0, mom = 0,
+						 sex = 0, phen = 0)
 	
-	# Make the .map file
-	# Get SNPs which exist in the founders
-	map_founders <- all_map[all_map$V2 %in% colnames(founders)[-1], ]
+	# Get the genotype columns from the above list
+	ped_genos <- lapply(founder_geno, function(x) select(x, allele1, allele2))
 	
-	# Make the ped file
-	# First 6 columns of .ped file
-	ped_founders <- data.frame(fid = founders$Founder, iid = founders$Founder,
-														 dad = 0, mom = 0,
-														 sex = 0, phen = 0)
+	# Combine the two and write to file
+	cbind(ped_founders, ped_genos) %>%
+		write.table(file.path(snp_dir, "founders.ped"), row.names = F, col.names = F, quote = F)
 	
-	# Genotypes in .ped format
-	ped_geno <- apply(founders[, map_founders$V2], 1, function(x){
-		x[which(is.na(x))] <- "00"
-		strsplit(x, "") %>% unlist()
-	}) %>% t()
+	# Write the .map file, which is the same as for the MAGIC lines
+	write.table(all_map, file.path(snp_dir, "founders.map"), row.names = F, col.names = F, quote = F)
 	
-	ped_founders <- cbind(ped_founders, ped_geno)
+	# Write genotypes in long tabular format (potentially useful for other analysis)
+	founder_geno <- bind_rows(founder_geno)
+	founder_geno <- merge(all_map, founder_geno, by.x = "V2", by.y = "marker")
+	names(founder_geno) <- c("marker", "chr", "cm", "pos", "acc", "allele")
 	
-	# Write files
-	write.table(map_founders, file.path(snp_dir, "founders.map"), row.names = F, col.names = F, quote = F)
-	write.table(ped_founders, file.path(snp_dir, "founders.ped"), row.names = F, col.names = F, quote = F)
-	
+	founder_geno %>%
+		select(marker, chr, pos, acc, allele) %>%
+		mutate(allele = ifelse(allele == "0", NA, allele)) %>%
+		write.table(., file.path(snp_dir, "founders.tsv"), row.names = F, quote = F, sep = "\t")
 }
 
 
@@ -157,13 +204,14 @@ tidyArabMagic <- function(snp_dir){
 	map <- read.table(map, header = T, stringsAsFactors = F)
 	
 	# Read HAPPY .alleles file
-	alleles <- readLines(alleles)
-	alleles <- alleles[grep("marker\t", alleles)] %>% read.table(text = .) %>%
-		rename(marker = V2) %>% select(marker)
+	markers <- readLines(alleles)
+	markers <- markers[grep("marker\t", markers)] %>% read.table(text = ., stringsAsFactors = F) %>%
+		.$V2
 	
 	# If any alleles are not in common between the .alleles and .map files
 	# Remove them from the ped file
-	miss_allele <- which(!(alleles$marker %in% map$marker))
+	miss_allele <- which(!(markers %in% map$marker))
+	markers <- markers[-miss_allele]
 	
 	if(length(miss_allele) > 0){
 		ped <- ped[,-1*(6 + c(miss_allele*2-1, miss_allele*2))]
@@ -172,9 +220,10 @@ tidyArabMagic <- function(snp_dir){
 	# Replace NA for '0' in .ped file
 	ped[is.na(ped)] <- "0"
 	
-	# Merge alleles and map tables, this way 
-	# exclude any missing markers from the map file
-	map <- merge(alleles, map) %>%
+	# Get the markers that were present in the alleles file
+	# which is the right order for the ped file. This also
+	# excludes any missing markers from the map file.
+	map <- map[match(markers, map$marker),] %>%
 		mutate(cm = 0) %>%
 		select(chromosome, marker, cm, bp)
 	

@@ -21,18 +21,16 @@ downloadArabMagic <- function(save_dir, tidy = TRUE, example_data = FALSE){
 	
 	# Create the directory if it doesn't exist
 	if(!dir.exists(save_dir)){
-		cat("Target directory does not exist. It will be created.")
+		cat("Target directory does not exist. It will be created.\n")
 		dir.create(save_dir)
 	}
 	
 	# Genotype files
 	magic_server <- 'http://mus.well.ox.ac.uk/POOLING/ARABIDOPSIS/FOUNDER/GENOTYPES/'
-	geno_founder <- 'founders.genotypes.txt'
 	geno_magic <- 'magic.15012010.tar.gz'
 	
 	# Download the files
 	cat("Downloading files from:\n", magic_server, "\n")
-	download.file(file.path(magic_server, geno_founder), file.path(save_dir, geno_founder))
 	download.file(file.path(magic_server, geno_magic), file.path(save_dir, geno_magic))
 	
 	# Untar the MAGIC genotypes
