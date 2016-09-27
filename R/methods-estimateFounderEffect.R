@@ -19,7 +19,7 @@ setGeneric("estimateFounderEffect",
 #'
 #' @examples
 #' ...
-setMethod("estimateFounderEffect", "MagicGen", 
+setMethod("estimateFounderEffect", "MagicGenPhen", 
 					function(x, phenotype, marker, n_samples = 500){
 	
 	phenotype <- getPhenotypes(x)[, phenotype]

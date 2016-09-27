@@ -8,18 +8,16 @@
 #' @param map map file (.happy.map).
 #' @param alleles alleles file (.happy.alleles).
 #' @param phenotypes a data.frame with phenotypes and with one of the columns being the MAGIC line IDs. 
+#' This is set to NULL by default, which returns a 'MagicGen' object with no phenotypes included.
 #' @param id the name of the variable with IDs in the data.frame passed to `phenotypes` argument.
+#' This is set to NULL by default, which returns a 'MagicGen' object with no phenotypes included.
 #'
-#' @return an object of type "MagicGen"
+#' @return an object of type "MagicGen" or "MagicGenPhen".
 #' @export
 #'
 #' @examples
 #' ...
-magicFounderReconstruct <- function(ped, map, alleles, phenotypes, id){
-	
-	# Get IDs of MAGIC lines
-	phenotypes <- rename_(phenotypes, magic = id)
-	ids <- as.character(phenotypes$magic)
+magicFounderReconstruct <- function(ped, map, alleles, phenotypes = NULL, id = NULL){
 	
 	# Make sure the path is expanded (no tilde and so on)
 	ped <- path.expand(ped)
@@ -30,28 +28,28 @@ magicFounderReconstruct <- function(ped, map, alleles, phenotypes, id){
 	h <- happy.hbrem::happy(ped, alleles, gen = 7, file = "ped", 
 														mapfile = map, haploid = TRUE)
 	
-	# Check that all IDs exist
-	if(any(!(ids %in% h$subjects))){
-		stop(paste("Some IDs do not have a genotype:", ids[which(!(ids %in% h$subjects))]))
-	}
-	
+
 	# Calculate genotype probabilities for each SNP
-	geno_prob <- lapply(h$additive$genome$marker, function(marker, h, ids){
+	geno_prob <- lapply(h$additive$genome$marker, function(marker, h){
 		probs <- happy.hbrem::hdesign(h, marker)
 		
 		rownames(probs) <- h$subjects
 		
-		return(probs[ids, ])
+		return(probs)
 		
-	}, h, ids)
+	}, h)
 	
 	names(geno_prob) <- h$additive$genome$marker
 	
-	# Output an object of class "MagicGen"
+	# Prepare object of class "MagicGen"
 	out <- new("MagicGen",
-						 phenotypes = phenotypes,
-						 markers = h$additive$genome,
-						 genotypes = geno_prob)
+	           markers = h$additive$genome,
+	           genotypes = geno_prob)
+	
+	# Add phenotypes if requested
+	if(!is.null(phenotypes) & !is.null(id)){
+	  out <- addPhenotypes(out, phenotypes, id)
+	}
 	
 	return(out)
 }

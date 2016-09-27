@@ -6,7 +6,7 @@
 #' @export
 #' @rdname getPhenotypes
 setGeneric("getPhenotypes", function(x) standardGeneric("getPhenotypes"))
-setMethod("getPhenotypes", "MagicGen", function(x) x@phenotypes)
+setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 
 
 #' Retrive genotypes from a MagicGen object
@@ -31,15 +31,22 @@ setGeneric("getMarkers", function(x) standardGeneric("getMarkers"))
 setMethod("getMarkers", "MagicGen", function(x) x@markers)
 
 
-# Set show method
+# Set show methods
 setMethod("show", "MagicGen", function(object){
-	phen <- getPhenotypes(object)
 	gen <- getGenotypes(object)
-	markers <- getMarkers(object)
-	
+
 	# Print information
 	cat("Object of class", class(object), "\n")
-	cat(nrow(phen), "MAGIC lines with a phenotype.\n")
-	cat("There are", ncol(phen)-1, "phenotypes:\n")
-	cat("Data exists for", length(gen), "markers.\n")
+	cat("Using genotypes for", length(gen), "markers.\n")
+})
+
+setMethod("show", "MagicGenPhen", function(object){
+  phen <- getPhenotypes(object)
+  gen <- getGenotypes(object)
+
+  # Print information
+  cat("Object of class", class(object), "\n")
+  cat(nrow(phen), "MAGIC lines with a phenotype.\n")
+  cat("There are", ncol(phen)-1, "phenotypes:\n", names(phen[,-1]), "\n")
+  cat("Using genotypes for", length(gen), "markers.\n")
 })

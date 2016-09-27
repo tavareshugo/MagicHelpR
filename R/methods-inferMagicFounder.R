@@ -17,7 +17,7 @@ setGeneric("inferMagicFounder",
 #'
 #' @examples
 #' ...
-setMethod("inferMagicFounder", "MagicGen", 
+setMethod("inferMagicFounder", "MagicGenPhen", 
 					function(x, marker, prob_thr = 0.5){
 	
 	# Get the genotype probabilities for the specified marker

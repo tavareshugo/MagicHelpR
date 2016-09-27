@@ -1,6 +1,6 @@
 #' Make a QTL scan
 #'
-#' @param x an object of class MagicData.
+#' @param x an object of class MagicGenPhen
 #' @param phenotype to run QTL analysis on.
 #' @param covariates optional name of column(s) from phenotypes to use as covariate(s). Default: NULL
 #' @param snp_cond optional ID of marker(s) to use as covariate(s) in the model. Default: NULL
@@ -24,7 +24,7 @@ setGeneric("magicQtlScan", function(x, phenotype, covariates = NULL, snp_cond = 
 #'
 #' @examples
 #' ...
-setMethod("magicQtlScan", "MagicGen", 
+setMethod("magicQtlScan", "MagicGenPhen", 
 					function(x, phenotype, covariates = NULL, snp_cond = NULL, 
 									 h1 = NULL, h0 = NULL, perm = 0, cores = 1){
 	
