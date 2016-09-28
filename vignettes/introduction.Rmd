@@ -24,7 +24,7 @@ This vignette introduces the main functions in the package, using a workflow wit
 
 For convenience, a function is included to download the genotype data. There is an option in the function that also calls the function `tidyArabMagic()`, which "tidies" that data (this mostly converts things to different formats and also combines the separate chromosome files into a single file, for convenience). Another option, which is set to FALSE by default, is to download example phenotype data.
 
-```{r}
+```{r, warning=FALSE}
 #library(MagicHelpR)
 devtools::load_all('~/Documents/code/R_packages/MagicHelpR/')
 
