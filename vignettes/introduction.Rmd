@@ -86,8 +86,8 @@ nrow(pheno)
 
 The reason to separate these two functions, is that the "MagicGen" object only has to be created once, and different tables of phenotypes can then be added to it later on. For example, the user might consider to create this object once and then save it as an `.rds` object, to use later on in future analysis:
 
-```{r}
-saveRDS('~/temp/magic_intro/magic_genotype_probabilities.rds')
+```{r, eval = FALSE}
+saveRDS(magic_geno, '~/temp/magic_intro/magic_genotype_probabilities.rds')
 ```
 
 In case you want to create a "MagicGenPhen" object (containing genotypes and phenotypes) in one go, you can pass the phenotype information to the `magicFounderReconstruct()` function:
