@@ -3,12 +3,12 @@
 \docType{methods}
 \name{inferMagicFounder}
 \alias{inferMagicFounder}
-\alias{inferMagicFounder,MagicGen-method}
+\alias{inferMagicFounder,MagicGenPhen-method}
 \title{Infer most likely founder for a given SNP}
 \usage{
 inferMagicFounder(x, marker, prob_thr = 0.5)
 
-\S4method{inferMagicFounder}{MagicGen}(x, marker, prob_thr = 0.5)
+\S4method{inferMagicFounder}{MagicGenPhen}(x, marker, prob_thr = 0.5)
 }
 \arguments{
 \item{x}{an object of class MagicData.}

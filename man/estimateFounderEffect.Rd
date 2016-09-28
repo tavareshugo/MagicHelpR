@@ -3,12 +3,12 @@
 \docType{methods}
 \name{estimateFounderEffect}
 \alias{estimateFounderEffect}
-\alias{estimateFounderEffect,MagicGen-method}
+\alias{estimateFounderEffect,MagicGenPhen-method}
 \title{Estimate founder effect based on probabilistic sampling}
 \usage{
 estimateFounderEffect(x, phenotype, marker, n_samples = 500)
 
-\S4method{estimateFounderEffect}{MagicGen}(x, phenotype, marker,
+\S4method{estimateFounderEffect}{MagicGenPhen}(x, phenotype, marker,
   n_samples = 500)
 }
 \arguments{

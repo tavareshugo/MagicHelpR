@@ -3,17 +3,17 @@
 \docType{methods}
 \name{magicQtlScan}
 \alias{magicQtlScan}
-\alias{magicQtlScan,MagicGen-method}
+\alias{magicQtlScan,MagicGenPhen-method}
 \title{Make a QTL scan}
 \usage{
 magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
   h0 = NULL, perm = 0, cores = 1)
 
-\S4method{magicQtlScan}{MagicGen}(x, phenotype, covariates = NULL,
+\S4method{magicQtlScan}{MagicGenPhen}(x, phenotype, covariates = NULL,
   snp_cond = NULL, h1 = NULL, h0 = NULL, perm = 0, cores = 1)
 }
 \arguments{
-\item{x}{an object of class MagicData.}
+\item{x}{an object of class MagicGenPhen}
 
 \item{phenotype}{to run QTL analysis on.}
 

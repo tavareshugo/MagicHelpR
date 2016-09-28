@@ -4,17 +4,25 @@
 \name{MagicGen-class}
 \alias{MagicGen}
 \alias{MagicGen-class}
+\alias{MagicGenPhen}
+\alias{MagicGenPhen-class}
 \title{MagicGen class}
 \description{
 MagicGen class
+
+MagicGenPhen class
 }
 \section{Slots}{
 
 \describe{
-\item{\code{phenotypes}}{data.frame with phenotypes for each MAGIC line.}
-
 \item{\code{markers}}{data.frame with marker names and positions.}
 
 \item{\code{genotypes}}{list with genotype probability matrices.}
+
+\item{\code{phenotypes}}{data.frame.}
+
+\item{\code{markers}}{data.frame.}
+
+\item{\code{genotypes}}{list.}
 }}
 

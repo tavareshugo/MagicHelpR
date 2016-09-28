@@ -4,7 +4,7 @@
 \alias{magicFounderReconstruct}
 \title{Calculate MAGIC founder genotype probabilities}
 \usage{
-magicFounderReconstruct(ped, map, alleles, phenotypes, id)
+magicFounderReconstruct(ped, map, alleles, phenotypes = NULL, id = NULL)
 }
 \arguments{
 \item{ped}{genotype file (.happy.ped).}
@@ -13,12 +13,14 @@ magicFounderReconstruct(ped, map, alleles, phenotypes, id)
 
 \item{alleles}{alleles file (.happy.alleles).}
 
-\item{phenotypes}{a data.frame with phenotypes and with one of the columns being the MAGIC line IDs.}
+\item{phenotypes}{a data.frame with phenotypes and with one of the columns being the MAGIC line IDs. 
+This is set to NULL by default, which returns a 'MagicGen' object with no phenotypes included.}
 
-\item{id}{the name of the variable with IDs in the data.frame passed to `phenotypes` argument.}
+\item{id}{the name of the variable with IDs in the data.frame passed to `phenotypes` argument.
+This is set to NULL by default, which returns a 'MagicGen' object with no phenotypes included.}
 }
 \value{
-an object of type "MagicGen"
+an object of type "MagicGen" or "MagicGenPhen".
 }
 \description{
 This function calls the function `happy.hbrem::happy()` to calculate 
