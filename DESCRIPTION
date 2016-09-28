@@ -12,4 +12,6 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 Requires: happy.hbrem
+Suggests:ggplot2,tidyr,knitr
+VignetteBuilder: knitr
 RoxygenNote: 5.0.1
