@@ -13,16 +13,31 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This is a package to perform QTL mapping on the [Arabidopsis MAGIC lines](http://mus.well.ox.ac.uk/magic/). It was mostly written for personal convenience, and it follows the same method implemented in the scripts available on that website. 
+This is a package to perform QTL mapping on the [Arabidopsis MAGIC lines](http://mtweb.cs.ucl.ac.uk/mus/www/magic/), 
+described in [Kover P .. Mott R (2009)](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551). 
+It was mostly written for personal convenience, and it follows the same method 
+implemented in the scripts available on that website. 
 
-The package allows you to download the genotype data from the public server, and convert it to PLINK format in case that is useful for other analysis. A small collection of functions allows to estimate the genotype probability matrix (using the `happy.hbrem` package) and run association tests between a phenotype of interest and each marker, using fixed effects linear models. This can be extended with more complex models, by accessing the genotype and phenotype data stored in a structured object created by the package. 
+The package allows you to download the genotype data from the public server, and 
+convert it to PLINK format in case that is useful for other analysis. A small 
+collection of functions allows to estimate the genotype probability matrix 
+(using the `happy.hbrem` package) and run association tests between a phenotype 
+of interest and each marker, using fixed effects linear models. This can be 
+extended with more complex models, by accessing the genotype and phenotype data 
+stored in a structured object created by the package. 
 
-This vignette introduces the main functions in the package, using a workflow with example phenotype data downloaded from the [MAGIC website](http://mus.well.ox.ac.uk/magic/MAGIC.phenotype.example.12102015.txt).
+This vignette introduces the main functions in the package, using a workflow 
+with example phenotype data downloaded from the [MAGIC website](http://mtweb.cs.ucl.ac.uk/mus/www/magic/MAGIC.phenotype.example.12102015.txt).
 
 
 ## Downloading the data
 
-For convenience, a function is included to download the genotype data. There is an option in the function that also calls the function `tidyArabMagic()`, which "tidies" that data (this mostly converts things to different formats and also combines the separate chromosome files into a single file, for convenience). Another option, which is set to FALSE by default, is to download example phenotype data.
+For convenience, a function is included to download the genotype data. There is 
+an option in the function that also calls the function `tidyArabMagic()`, which 
+"tidies" that data (this mostly converts things to different formats and also 
+combines the separate chromosome files into a single file, for convenience). 
+Another option, which is set to FALSE by default, is to download example 
+phenotype data.
 
 ```{r, warning=FALSE}
 #library(MagicHelpR)
@@ -34,7 +49,11 @@ downloadArabMagic('~/temp/magic_intro/', tidy = TRUE, example_data = TRUE)
 
 ## Genotype probability matrix
 
-The idea with the MAGIC lines is to use information about the founder population when doing the association mapping. Therefore, one needs to infer from which of the 19 founder accessions, each marker allele derives from. This "reconstruction" step can be performed using the function `magicFounderReconstruct()`, which uses the functions from the `happy.hbrem` package. 
+The idea with the MAGIC lines is to use information about the founder population 
+when doing the association mapping. Therefore, one needs to infer from which of 
+the 19 founder accessions, each marker allele derives from. This "reconstruction" 
+step can be performed using the function `magicFounderReconstruct()`, which uses 
+the functions from the `happy.hbrem` package. 
 
 ```{r}
 magic_geno <- magicFounderReconstruct(ped = '~/temp/magic_intro/all_chr.MAGIC.happy.data',
@@ -42,7 +61,10 @@ magic_geno <- magicFounderReconstruct(ped = '~/temp/magic_intro/all_chr.MAGIC.ha
                                       alleles = '~/temp/magic_intro/all_chr.MAGIC.happy.alleles')
 ```
 
-This function returns an object of class "MagicGen". This is a relatively simple object containing a table of marker names and positions and a list of genotype probabilities for each of those markers. Both can be accessed using the functions `getMarkers()` and `getGenotypes()`, respectively.
+This function returns an object of class "MagicGen". This is a relatively simple 
+object containing a table of marker names and positions and a list of genotype 
+probabilities for each of those markers. Both can be accessed using the 
+functions `getMarkers()` and `getGenotypes()`, respectively.
 
 ```{r}
 # Look at a few of the markers
@@ -55,7 +77,9 @@ head(getGenotypes(magic_geno)$MN1_29291)
 
 ## Adding phenotypes to the analysis
 
-To perform the QTL analysis, you should create a table with phenotypes. This is just a regular `data.frame`, with one of the columns containing the MAGIC line IDs. 
+To perform the QTL analysis, you should create a table with phenotypes. This is 
+just a regular `data.frame`, with one of the columns containing the MAGIC line 
+IDs. 
 
 In this example, we read the phenotype table that was downloaded before:
 
@@ -71,7 +95,9 @@ To add this information to the "MagicGen" object we can do:
 magic_geno_phen <- addPhenotypes(magic_geno, pheno, "SUBJECT.NAME")
 ```
 
-This returns an object of class "MagicGenPhen", which is very similar to the one from before, but with phenotype information added to it. Also, the genotypes are kept only for those individuals that had a phenotype. 
+This returns an object of class "MagicGenPhen", which is very similar to the one 
+from before, but with phenotype information added to it. Also, the genotypes are 
+kept only for those individuals that had a phenotype. 
 
 ```{r}
 # Number of individuals with genotype in the "MagicGen" object
@@ -84,13 +110,18 @@ nrow(getGenotypes(magic_geno_phen)[[1]])
 nrow(pheno)
 ```
 
-The reason to separate these two functions, is that the "MagicGen" object only has to be created once, and different tables of phenotypes can then be added to it later on. For example, the user might consider to create this object once and then save it as an `.rds` object, to use later on in future analysis:
+The reason to separate these two functions, is that the "MagicGen" object only 
+has to be created once, and different tables of phenotypes can then be added to 
+it later on. For example, the user might consider to create this object once and 
+then save it as an `.rds` object, to use later on in future analysis:
 
 ```{r, eval = FALSE}
 saveRDS(magic_geno, '~/temp/magic_intro/magic_genotype_probabilities.rds')
 ```
 
-In case you want to create a "MagicGenPhen" object (containing genotypes and phenotypes) in one go, you can pass the phenotype information to the `magicFounderReconstruct()` function:
+In case you want to create a "MagicGenPhen" object (containing genotypes and 
+phenotypes) in one go, you can pass the phenotype information to the 
+`magicFounderReconstruct()` function:
 
 ```{r}
 magic_geno_phen_2 <- magicFounderReconstruct(ped = '~/temp/magic_intro/all_chr.MAGIC.happy.data',
@@ -103,14 +134,18 @@ identical(magic_geno_phen, magic_geno_phen_2)
 
 ## Performing standard QTL mapping
 
-The function `magicQtlScan()` performs a basic association analysis using an F-test to compare two linear models, one with the genotype probabilities for each founder accession as explanatory variables and a null model with no explanatory variables (only an intercept).
+The function `magicQtlScan()` performs a basic association analysis using an 
+F-test to compare two linear models, one with the genotype probabilities for 
+each founder accession as explanatory variables and a null model with no 
+explanatory variables (only an intercept).
 
 ```{r}
 # QTL scan for days.to.bolt trait
 bolt_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt")
 ```
 
-The function supports the use of multiple cores (not supported on Windows), which can speed the computation:
+The function supports the use of multiple cores (not supported on Windows), 
+which can speed the computation:
 
 ```{r}
 # QTL scan for days.to.bolt trait
@@ -118,7 +153,8 @@ bolt_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt", cores = 2)
 head(bolt_qtl)
 ```
 
-This returns a standard `data.frame` object, and it can be easily plotted, for example with `ggplot2`:
+This returns a standard `data.frame` object, and it can be easily plotted, for 
+example with `ggplot2`:
 
 ```{r}
 # Load the library and change the default theme
@@ -131,23 +167,30 @@ ggplot(bolt_qtl, aes(bp/1e6, -log10(p))) +
   geom_hline(yintercept = 3.5, linetype = "dotted")
 ```
 
-You can also get the _R^2_ of linear model for the peak markers, which can give an indication of the variance explained by them. For example, the peak marker on Chr4, in the _Frigida_ gene:
+You can also get the _R^2_ of linear model for the peak markers, which can give 
+an indication of the variance explained by them. For example, the peak marker on 
+Chr4, in the _Frigida_ gene:
 
 ```{r}
 bolt_qtl %>% arrange(p) %>% slice(1)
 ```
 
-The `r2_h1` column contains the _R^2_ of the linear model for the alternative hypothesis tested, indicating that ~25% of the variance is explained by that SNP. 
+The `r2_h1` column contains the _R^2_ of the linear model for the alternative 
+hypothesis tested, indicating that ~25% of the variance is explained by that 
+SNP. 
 
 
 ## Custom models
 
-The `magicQtlScan()` function allows to fit more complex, customised models. You can explicitly specify these models using the same sintax used for the `lm()` function in the base R package. 
+The `magicQtlScan()` function allows to fit more complex, customised models. You 
+can explicitly specify these models using the same sintax used for the `lm()` 
+function in the base R package. 
 
 
 ### Using covariate traits
 
-For example, the traits _days.to.bolt_ and _bolt.to.flower_ are correlated with each other:
+For example, the traits _days.to.bolt_ and _bolt.to.flower_ are correlated with 
+each other:
 
 ```{r}
 qplot(days.to.bolt, bolt.to.flower, data = pheno)
@@ -164,7 +207,10 @@ ggplot(flower_qtl, aes(bp/1e6, -log10(p))) +
   geom_hline(yintercept = 3.5, linetype = "dotted")
 ```
 
-But let's say we wanted to find QTL that explain some of the residual variation that might exist when the correlation between the two traits is taken into account. For this, we could use one of them as a covariate in the model, for example:
+But let's say we wanted to find QTL that explain some of the residual variation 
+that might exist when the correlation between the two traits is taken into 
+account. For this, we could use one of them as a covariate in the model, for 
+example:
 
 ```{r}
 bolt_cov_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt",
@@ -177,11 +223,14 @@ ggplot(bolt_cov_qtl, aes(bp/1e6, -log10(p))) +
   geom_line(data = bolt_qtl, aes(colour = "single trait"))
 ```
 
-We can see that the QTL on Chr4 is still significant, even when the correlation between the two traits is taken into account, whereas those on Chr1 and Chr5 are less convincing.
+We can see that the QTL on Chr4 is still significant, even when the correlation 
+between the two traits is taken into account, whereas those on Chr1 and Chr5 are 
+less convincing.
 
 ### Using SNP covariates
 
-The above result also suggests that different QTL might explain common variance. This can be explored by using the SNPs as covariates in the model:
+The above result also suggests that different QTL might explain common variance. 
+This can be explored by using the SNPs as covariates in the model:
 
 ```{r}
 # Run QTL scan conditional on the peak marker on Chr1
@@ -197,21 +246,30 @@ ggplot(bolt_snp_qtl, aes(bp/1e6, -log10(p))) +
   geom_line(data = bolt_qtl, aes(colour = "single trait"))
 ```
 
-Since the two other QTL on Chr4 and Chr5 remain after taking into account the contribution of the QTL on Chr1, it suggests that they explain extra phenotypic variance not captured by the QTL on Chr1.
+Since the two other QTL on Chr4 and Chr5 remain after taking into account the 
+contribution of the QTL on Chr1, it suggests that they explain extra phenotypic 
+variance not captured by the QTL on Chr1.
 
 
 ### Custom models
 
 Example to be added...
 
-But essentially you can use the same syntax used in the `lm()` function in the base R package, to define the null and alternative hypothesis of the models being compared (these are the options `h1` and `h0` in the `magicQtlScan()` function). The genotype term is specified as GEN. The message printed when running the above `magicQtlScan()` calls gives examples of how the models are specified internally. 
+But essentially you can use the same syntax used in the `lm()` function in the 
+base R package, to define the null and alternative hypothesis of the models 
+being compared (these are the options `h1` and `h0` in the `magicQtlScan()` 
+function). The genotype term is specified as GEN. The message printed when 
+running the above `magicQtlScan()` calls gives examples of how the models are 
+specified internally. 
 
 This allows for example running models using interaction terms, etc.
 
 
 ### Even more customised models
 
-If you feel limited by the capability of the `magicQtlScan()` function, you can make your own implementation, by accessing the data in the _MagicGenPhen_ object. For example, here is a "manual" implementation of the basic QTL scan:
+If you feel limited by the capability of the `magicQtlScan()` function, you can 
+make your own implementation, by accessing the data in the _MagicGenPhen_ object. 
+For example, here is a "manual" implementation of the basic QTL scan:
 
 ```{r}
 phenotypes <- getPhenotypes(magic_geno_phen)

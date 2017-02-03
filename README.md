@@ -1,20 +1,22 @@
 # MagicHelpR
 
-A package to help in performing QTL mapping in multiparent advanced generation intercross 
-(MAGIC) lines.
+A package written mostly for personal convenience to help in performing QTL 
+mapping in the Arabidopsis multiparent advanced generation intercross (MAGIC) 
+lines (described in [Kover P .. Mott R 2009](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551)).
 
-The package was written to aid in analysing data from Arabidopsis, and is partially 
-based on Richard Mott's scripts available at:
-http://mus.well.ox.ac.uk/magic/
+This might however be useful for anyone using the Arabidopsis MAGIC lines. It
+depends Richard Mott's `happy.hbrem` package, available at:
+http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 
-It also depends on the R package `happy.hbrem`, available on the same website. 
-(instructions for its installation to follow).
+And essentially implements the same linear model approach in the available 
+scripts, but with some more flexibility for specifying models and outputs 
+tabular data that is convenient for downstream analysis and plotting.
 
-To install this package just do:
+To install this package, launch R and issue the following commands:
 ```
 #If not already installed, install devtools:
 # install.packages("devtools")
 devtools::install_github("tavareshugo/MagicHelpR")
 ```
 
-Will add an intro vignette in time.
+There's also a basic [introduction vignette](vignettes/introduction.Rmd).
