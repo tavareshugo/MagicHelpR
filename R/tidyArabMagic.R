@@ -161,7 +161,7 @@ tidyArabMagic <- function(snp_dir){
   
   # For each marker present in the MAGIC lines, extract the allele of each accession
   ## Some are missing!
-  founder_geno <- lapply(all_map$V2, function(marker, alleles_read){
+  founder_geno <- lapply(magic_markers, function(marker, alleles_read){
     
     # Get founder accession names (second line of the .happy.alleles file)
     founder_id <- unlist(strsplit(alleles_read[2], "\t"))[-1]
@@ -206,9 +206,11 @@ tidyArabMagic <- function(snp_dir){
   
   # Get the genotype columns from the above list
   ped_genos <- lapply(founder_geno, function(x) select(x, allele1, allele2))
+  names(ped_genos) <- magic_markers
   
   # Combine the two and write to file
-  cbind(ped_founders, ped_genos) %>%
+  ## need to ensure only the markers with coordinates in the .map file are included
+  bind_cols(ped_founders, ped_genos[all_map$V2]) %>%
     write.table(file.path(snp_dir, "founders.ped"), row.names = F, col.names = F, quote = F)
   
   # Write the .map file, which is the same as for the MAGIC lines
@@ -216,11 +218,10 @@ tidyArabMagic <- function(snp_dir){
   
   # Write genotypes in long tabular format (potentially useful for other analysis)
   founder_geno <- bind_rows(founder_geno)
-  founder_geno <- merge(all_map, founder_geno, by.x = "V2", by.y = "marker")
-  names(founder_geno) <- c("marker", "chr", "cm", "pos", "acc", "allele")
   
   founder_geno %>%
-    select(marker, chr, pos, acc, allele) %>%
+    select(acc, marker, allele1) %>%
+    rename(allele = allele1, accession = acc) %>% 
     mutate(allele = ifelse(allele == "0", NA, allele)) %>%
     write.table(., file.path(snp_dir, "founder_genotypes.tsv"), row.names = F, quote = F, sep = "\t")
 }
