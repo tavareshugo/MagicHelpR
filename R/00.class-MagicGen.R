@@ -6,8 +6,8 @@
 #' @rdname class-MagicGen
 #' @aliases MagicGen
 setClass("MagicGen",
-				 representation(markers = "data.frame", 
-				 							 genotypes = "list"))
+         representation(markers = "data.frame", 
+                        genotypes = "list"))
 
 
 #' MagicGenPhen class
@@ -25,3 +25,5 @@ setClass("MagicGenPhen",
          contains = "MagicGen")
 
 
+# Set old classes for "tbl_df" and "tbl"
+setOldClass(c("tbl_df", "tbl", "data.frame"))
