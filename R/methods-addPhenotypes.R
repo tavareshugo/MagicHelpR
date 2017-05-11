@@ -33,21 +33,28 @@ setMethod("addPhenotypes", "MagicGen",
             ids <- as.character(phenotypes$magic)
             
             # Check that all IDs exist
-            if(any(!(ids %in% rownames(x@genotypes[[1]])))){
+            if(any(!(ids %in% rownames(x@prob_genotypes[[1]])))){
               stop(paste("Some IDs do not have a genotype:", ids[which(!(ids %in% h$subjects))], "\n",
                          "Consider removing them from the phenotype table."))
             }
             
-            # Subset genotype probability matrices for each SNP
-            geno_prob <- lapply(getGenotypes(x), function(probs, ids){
-              return(probs[ids, ])
+            # Subset genotypes to include only those MAGIC lines with a phenotype
+            geno_prob <- lapply(getProbGenotypes(x), function(g, ids){
+              return(g[ids, ])
             }, ids)
             
-            # Update "MagicGen" object
+            geno_snp <- lapply(getSnpGenotypes(x), function(g, ids){
+              return(g[ids])
+            }, ids)
+            
+            
+            # Create new "MagicGenPhen" object
             out <- new("MagicGenPhen",
                        phenotypes = phenotypes,
                        markers = getMarkers(x),
-                       genotypes = geno_prob)
+                       prob_genotypes = geno_prob,
+                       snp_genotypes = geno_snp,
+                       founder_genotypes = getFounderGenotypes(x))
             
             return(out)
 
