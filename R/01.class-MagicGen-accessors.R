@@ -9,15 +9,37 @@ setGeneric("getPhenotypes", function(x) standardGeneric("getPhenotypes"))
 setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 
 
-#' Retrive genotypes from a MagicGen object
+#' Retrive SNP genotypes of the MAGIC lines from a MagicGen object
+#'
+#' @param x an object of class "MagicGen".
+#'
+#' @return a list of genotypes SNP.
+#' @export
+#' @rdname getSnpGenotypes
+setGeneric("getSnpGenotypes", function(x) standardGeneric("getSnpGenotypes"))
+setMethod("getSnpGenotypes", "MagicGen", function(x) x@snp_genotypes)
+
+
+#' Retrive genotype probabilities for the MAGIC lines from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'
 #' @return a list of genotype probabilities for every SNP.
 #' @export
-#' @rdname getGenotypes
-setGeneric("getGenotypes", function(x) standardGeneric("getGenotypes"))
-setMethod("getGenotypes", "MagicGen", function(x) x@genotypes)
+#' @rdname getProbGenotypes
+setGeneric("getProbGenotypes", function(x) standardGeneric("getProbGenotypes"))
+setMethod("getProbGenotypes", "MagicGen", function(x) x@prob_genotypes)
+
+
+#' Retrive SNP genotypes of MAGIC founders from a MagicGen object
+#'
+#' @param x an object of class "MagicGen".
+#'
+#' @return a list of genotypes for each founder accession.
+#' @export
+#' @rdname getFounderGenotypes
+setGeneric("getFounderGenotypes", function(x) standardGeneric("getFounderGenotypes"))
+setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
 
 
 #' Retrive markers from a MagicGen object
@@ -33,16 +55,16 @@ setMethod("getMarkers", "MagicGen", function(x) x@markers)
 
 # Set show methods
 setMethod("show", "MagicGen", function(object){
-	gen <- getGenotypes(object)
+  gen <- getProbGenotypes(object)
 
-	# Print information
-	cat("Object of class", class(object), "\n")
-	cat("Using genotypes for", length(gen), "markers.\n")
+  # Print information
+  cat("Object of class", class(object), "\n")
+  cat("Using genotypes for", length(gen), "markers.\n")
 })
 
 setMethod("show", "MagicGenPhen", function(object){
   phen <- getPhenotypes(object)
-  gen <- getGenotypes(object)
+  gen <- getProbGenotypes(object)
 
   # Print information
   cat("Object of class", class(object), "\n")
