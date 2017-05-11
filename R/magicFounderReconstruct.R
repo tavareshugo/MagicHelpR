@@ -87,7 +87,9 @@ magicFounderReconstruct <- function(snp_dir, phenotypes = NULL, id = NULL){
   geno_founder <- read.table(founders, header = TRUE, stringsAsFactors = FALSE)
   
   # Split into a list
-  geno_founder <- split(geno_founder, geno_founder$marker)
+  geno_founder <- geno_founder %>% 
+    filter(marker %in% names(geno_prob)) %>% 
+    split(.$marker)
   
   
   ##### Create MagicGen object #####
