@@ -103,6 +103,37 @@ tidyArabMagic <- function(snp_dir){
                 quote = F, row.names = F, col.names = F)
   
   
+  ###### Create long table with all MAGIC genotypes ###### 
+  # This will be useful for easy loading into R
+  
+  # First get only one allele for each marker (as they are homozygous)
+  magic_geno <- ped_read[, seq(1, ncol(ped_read), 2)]
+  
+  # Then get the marker names from the alleles file 
+  # (note that the .map file contains extra markers that are not present in 
+  # the .data file)
+  magic_markers <- readLines(file.path(snp_dir, "all_chr.MAGIC.happy.alleles"))
+  
+  magic_markers <- magic_markers[grep("marker\t", magic_markers)] %>% 
+    strsplit("\t") %>% 
+    lapply(function(x) x[[2]]) %>% 
+    unlist()
+  
+  # Now add these as the names of the genotype table
+  if(ncol(magic_geno) != length(magic_markers)) stop("Check some bug here!")
+  names(magic_geno) <- magic_markers
+  
+  # Finally add the MAGIC IDs to the table
+  magic_geno <- cbind(read.table(ped_files[1])[,1], magic_geno)
+  names(magic_geno)[1] <- "magic"
+  
+  # Write the output in long format
+  magic_geno %>% 
+    gather("marker", "allele", -magic) %>%
+    write.table(file.path(snp_dir, "magic_genotypes.tsv"), 
+                row.names = F, quote = F, sep = "\t")
+  
+  
   ##### Combine plink.map files ####
   all_map <- lapply(file.path(snp_dir, paste0("chr", 1:5, ".MAGIC.plink.map")), 
                     read.table, header = F, stringsAsFactors = F) %>%
@@ -156,9 +187,9 @@ tidyArabMagic <- function(snp_dir){
       group_by(accession) %>%
       summarise(allele = ifelse(sum(prob) == 0, "0", allele[which.max(prob)]))
     
-    # Issue warning if the number of alleles is not as expected
-    if(sum(grepl("o", alleles$allele)) > 19) warning(paste(marker, "too many founder alleles!"))
-    if(sum(grepl("o", alleles$allele)) < 19) warning(paste(marker, "missing some founder genotypes"))
+    # Issue warning if there are missing founder genotypes
+    ## and there are...
+    if(sum(grepl("0", alleles$allele)) > 0) warning(paste(marker, "missing some founder genotypes"))
     
     # Return a data.frame with marker name, accession and two columns with the allele
     return(data.frame(marker = marker, acc = alleles$accession, 
@@ -191,7 +222,7 @@ tidyArabMagic <- function(snp_dir){
   founder_geno %>%
     select(marker, chr, pos, acc, allele) %>%
     mutate(allele = ifelse(allele == "0", NA, allele)) %>%
-    write.table(., file.path(snp_dir, "founders.tsv"), row.names = F, quote = F, sep = "\t")
+    write.table(., file.path(snp_dir, "founder_genotypes.tsv"), row.names = F, quote = F, sep = "\t")
 }
 
 
