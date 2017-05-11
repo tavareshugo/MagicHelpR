@@ -7,7 +7,9 @@
 #' @aliases MagicGen
 setClass("MagicGen",
          representation(markers = "data.frame", 
-                        genotypes = "list"))
+                        snp_genotypes = "list",
+                        prob_genotypes = "list",
+                        founder_genotypes = "list"))
 
 
 #' MagicGenPhen class
@@ -21,7 +23,9 @@ setClass("MagicGen",
 setClass("MagicGenPhen",
          representation(phenotypes = "data.frame",
                         markers = "data.frame", 
-                        genotypes = "list"),
+                        snp_genotypes = "list",
+                        prob_genotypes = "list",
+                        founder_genotypes = "list"),
          contains = "MagicGen")
 
 
