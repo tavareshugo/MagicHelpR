@@ -27,4 +27,3 @@ The genotypes are kept only for those individuals with a genotype.
 \examples{
 ...to be added...
 }
-

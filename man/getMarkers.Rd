@@ -15,4 +15,3 @@ a data.frame of marker names and positions.
 \description{
 Retrive markers from a MagicGen object
 }
-

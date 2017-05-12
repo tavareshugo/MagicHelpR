@@ -15,4 +15,3 @@ data.frame of phenotypes
 \description{
 Retrive phenotypes from a MagicGen object
 }
-

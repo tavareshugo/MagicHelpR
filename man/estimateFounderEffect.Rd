@@ -29,4 +29,3 @@ Estimate founder effect based on probabilistic sampling
 \examples{
 ...
 }
-

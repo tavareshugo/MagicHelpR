@@ -4,14 +4,14 @@
 \alias{magicFounderReconstruct}
 \title{Calculate MAGIC founder genotype probabilities}
 \usage{
-magicFounderReconstruct(ped, map, alleles, phenotypes = NULL, id = NULL)
+magicFounderReconstruct(snp_dir, phenotypes = NULL, id = NULL)
 }
 \arguments{
-\item{ped}{genotype file (.happy.ped).}
-
-\item{map}{map file (.happy.map).}
-
-\item{alleles}{alleles file (.happy.alleles).}
+\item{snp_dir}{directory with all genotype files. The function will be looking 
+for files named "all_chr.MAGIC.happy.data", "all_chr.MAGIC.happy.map", 
+"all_chr.MAGIC.happy.alleles", "founder_genotypes.tsv" and "magic_genotypes.tsv". 
+All these files can be created with either the \code{tidyArabMagic} or
+\code{downloadArabMagic} functions.}
 
 \item{phenotypes}{a data.frame with phenotypes and with one of the columns being the MAGIC line IDs. 
 This is set to NULL by default, which returns a 'MagicGen' object with no phenotypes included.}
@@ -30,4 +30,3 @@ at each marker SNP.
 \examples{
 ...
 }
-

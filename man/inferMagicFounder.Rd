@@ -26,4 +26,3 @@ Infer most likely founder for a given SNP
 \examples{
 ...
 }
-

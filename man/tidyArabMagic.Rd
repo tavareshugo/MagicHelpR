@@ -17,4 +17,3 @@ Tidy Arabidopsis MAGIC genotypes
 downloadArabMagic('~/temp/magic_snp_1k/', tidy = FALSE)
 tidyArabMagic('~/temp/magic_snp_1k/')
 }
-

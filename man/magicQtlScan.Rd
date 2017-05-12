@@ -6,11 +6,13 @@
 \alias{magicQtlScan,MagicGenPhen-method}
 \title{Make a QTL scan}
 \usage{
-magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
-  h0 = NULL, perm = 0, cores = 1)
+magicQtlScan(x, phenotype, covariates = NULL, marker_cov = NULL,
+  h1 = NULL, h0 = NULL, perm = 0, method = c("probability", "allele"),
+  cores = 1)
 
 \S4method{magicQtlScan}{MagicGenPhen}(x, phenotype, covariates = NULL,
-  snp_cond = NULL, h1 = NULL, h0 = NULL, perm = 0, cores = 1)
+  marker_cov = NULL, h1 = NULL, h0 = NULL, perm = 0,
+  method = c("probability", "allele"), cores = 1)
 }
 \arguments{
 \item{x}{an object of class MagicGenPhen}
@@ -19,7 +21,7 @@ magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
 
 \item{covariates}{optional name of column(s) from phenotypes to use as covariate(s). Default: NULL}
 
-\item{snp_cond}{optional ID of marker(s) to use as covariate(s) in the model. Default: NULL}
+\item{marker_cov}{optional ID of marker(s) to use as covariate(s) in the model. Default: NULL}
 
 \item{h1}{optional optional model to test. Need to provide `h0` as well. Default: NULL}
 
@@ -28,6 +30,11 @@ magicQtlScan(x, phenotype, covariates = NULL, snp_cond = NULL, h1 = NULL,
 \item{perm}{optional number of permutations to run. If provided will permute the phenotypes 
 the number of requested times and then run the QTL scan. It will add a new column to
 the output with a genome-wide p-value (proportion of times where observed p > permuted p). Default: 0}
+
+\item{method}{the method to incorporate genotypes in the model. Either 
+"probability", which uses probability matrices of founder ancestry for each 
+marker or "allele" to simply use the marker alleles (typically two alleles 
+from a SNP). Default: probability.}
 
 \item{cores}{number of cores to use (Windows only supports 1 core). Default: 1}
 }
@@ -40,4 +47,3 @@ Make a QTL scan
 \examples{
 ...
 }
-

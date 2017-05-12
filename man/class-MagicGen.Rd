@@ -2,10 +2,10 @@
 % Please edit documentation in R/00.class-MagicGen.R
 \docType{class}
 \name{MagicGen-class}
-\alias{MagicGen}
 \alias{MagicGen-class}
-\alias{MagicGenPhen}
+\alias{MagicGen}
 \alias{MagicGenPhen-class}
+\alias{MagicGenPhen}
 \title{MagicGen class}
 \description{
 MagicGen class
