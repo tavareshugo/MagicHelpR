@@ -1,7 +1,7 @@
 ---
-title: "MagicHelpR introduction"
+title: "Introduction to MagicHelpR"
 author: "Hugo Tavares"
-date: "27 September 2016"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to MagicHelpR}
@@ -13,8 +13,10 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This is a package to perform QTL mapping on the [Arabidopsis MAGIC lines](http://mtweb.cs.ucl.ac.uk/mus/www/magic/), 
-described in [Kover P .. Mott R (2009)](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551). 
+This is a package to perform QTL mapping on the 
+[Arabidopsis MAGIC lines](http://mtweb.cs.ucl.ac.uk/mus/www/magic/), 
+described in 
+[Kover P .. Mott R (2009)](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551). 
 It was mostly written for personal convenience, and it follows the same method 
 implemented in the scripts available on that website. 
 
@@ -40,9 +42,7 @@ Another option, which is set to FALSE by default, is to download example
 phenotype data.
 
 ```{r, warning=FALSE}
-#library(MagicHelpR)
-devtools::load_all('~/Documents/code/R_packages/MagicHelpR/')
-
+library(MagicHelpR)
 downloadArabMagic('~/temp/magic_intro/', tidy = TRUE, example_data = TRUE)
 ```
 
@@ -55,31 +55,58 @@ the 19 founder accessions, each marker allele derives from. This "reconstruction
 step can be performed using the function `magicFounderReconstruct()`, which uses 
 the functions from the `happy.hbrem` package. 
 
+The function requires a directory where all the genotype files are stored. Note 
+that these files should preferably have been produced by the `tidyArabMagic()`
+function to ensure data formats are correct.
+
 ```{r}
-magic_geno <- magicFounderReconstruct(ped = '~/temp/magic_intro/all_chr.MAGIC.happy.data',
-                                      map = '~/temp/magic_intro/all_chr.MAGIC.happy.map',
-                                      alleles = '~/temp/magic_intro/all_chr.MAGIC.happy.alleles')
+magic_geno <- magicFounderReconstruct(snp_dir = "~/temp/magic_intro")
 ```
 
-This function returns an object of class "MagicGen". This is a relatively simple 
-object containing a table of marker names and positions and a list of genotype 
-probabilities for each of those markers. Both can be accessed using the 
-functions `getMarkers()` and `getGenotypes()`, respectively.
+This function returns an object of class "MagicGen". This object contains 
+the following:
+
+* a table with all the marker names and their locations. This can be accessed 
+with he function `getMarkers()`.
+* a list of SNP genotypes for each marker. This can be accessed with the 
+function `getSnpGenotypes()`.
+* a list of genotype probabilities for each marker. This can be access with the 
+function `getProbGenotypes`.
+* a table with SNP genotypes of the founder accessions.
+
+Here are some examples of using these functions to access information from 
+this.
+
+If we want to see marker information
 
 ```{r}
-# Look at a few of the markers
 head(getMarkers(magic_geno))
+```
 
-# Look at the genotype probability matrix for marker "MN1_29291"
-head(getGenotypes(magic_geno)$MN1_29291)
+If we want to see SNP genotypes for marker "MN1_29291":
+
+```{r}
+head(getSnpGenotypes(magic_geno)$MN1_29291)
+```
+
+If we want to see the genotype probability matrix for that marker:
+
+```{r}
+head(getProbGenotypes(magic_geno)$MN1_29291)
+```
+
+And finally, if we want to see what the founder genotypes were in that marker:
+
+```{r}
+getFounderGenotypes(magic_geno)$MN1_29291
 ```
 
 
 ## Adding phenotypes to the analysis
 
-To perform the QTL analysis, you should create a table with phenotypes. This is 
-just a regular `data.frame`, with one of the columns containing the MAGIC line 
-IDs. 
+To perform the QTL analysis, you should create a table with phenotypes. This 
+should be a regular `data.frame`, with one of the columns containing the MAGIC 
+line IDs. 
 
 In this example, we read the phenotype table that was downloaded before:
 
@@ -88,11 +115,12 @@ pheno <- read.table('~/temp/magic_intro/magic_phenotype_example.txt', header = T
 head(pheno)
 ```
 
-To add this information to the "MagicGen" object we can do:
+To add this information to the "MagicGen" object we use the function 
+`addPhenotypes()`:
 
 ```{r}
 # Pass the phenotype data.frame and specify which column contains the MAGIC line IDs
-magic_geno_phen <- addPhenotypes(magic_geno, pheno, "SUBJECT.NAME")
+magic_phen <- addPhenotypes(magic_geno, pheno, "SUBJECT.NAME")
 ```
 
 This returns an object of class "MagicGenPhen", which is very similar to the one 
@@ -100,14 +128,7 @@ from before, but with phenotype information added to it. Also, the genotypes are
 kept only for those individuals that had a phenotype. 
 
 ```{r}
-# Number of individuals with genotype in the "MagicGen" object
-nrow(getGenotypes(magic_geno)[[1]])
-
-# Number of individuals with genotype in the "MagicGenPhen" object
-nrow(getGenotypes(magic_geno_phen)[[1]])
-
-# This matches the number of individuals with a phenotye
-nrow(pheno)
+magic_phen
 ```
 
 The reason to separate these two functions, is that the "MagicGen" object only 
@@ -123,12 +144,9 @@ In case you want to create a "MagicGenPhen" object (containing genotypes and
 phenotypes) in one go, you can pass the phenotype information to the 
 `magicFounderReconstruct()` function:
 
-```{r}
-magic_geno_phen_2 <- magicFounderReconstruct(ped = '~/temp/magic_intro/all_chr.MAGIC.happy.data',
-                                             map = '~/temp/magic_intro/all_chr.MAGIC.happy.map',
-                                             alleles = '~/temp/magic_intro/all_chr.MAGIC.happy.alleles',
+```{r, eval = FALSE}
+magic_phen2 <- magicFounderReconstruct(snp_dir = "~/temp/magic_intro/",
                                              phenotypes = pheno, id = "SUBJECT.NAME")
-identical(magic_geno_phen, magic_geno_phen_2)
 ```
 
 
@@ -139,21 +157,23 @@ F-test to compare two linear models, one with the genotype probabilities for
 each founder accession as explanatory variables and a null model with no 
 explanatory variables (only an intercept).
 
+For example:
+
 ```{r}
 # QTL scan for days.to.bolt trait
-bolt_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt")
+bolt_qtl <- magicQtlScan(magic_phen, "days.to.bolt")
 ```
 
 The function supports the use of multiple cores (not supported on Windows), 
 which can speed the computation:
 
-```{r}
+```{r, eval = FALSE}
 # QTL scan for days.to.bolt trait
 bolt_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt", cores = 2)
 head(bolt_qtl)
 ```
 
-This returns a standard `data.frame` object, and it can be easily plotted, for 
+This returns a standard `data.frame` object, and it can be plotted, for 
 example with `ggplot2`:
 
 ```{r}
@@ -199,7 +219,7 @@ qplot(days.to.bolt, bolt.to.flower, data = pheno)
 Indeed, the QTL scan for the two traits picks similar QTL:
 
 ```{r}
-flower_qtl <- magicQtlScan(magic_geno_phen, "bolt.to.flower", cores = 2)
+flower_qtl <- magicQtlScan(magic_phen, "bolt.to.flower", cores = 2)
 
 ggplot(flower_qtl, aes(bp/1e6, -log10(p))) +
   geom_line() +
@@ -213,7 +233,7 @@ account. For this, we could use one of them as a covariate in the model, for
 example:
 
 ```{r}
-bolt_cov_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt",
+bolt_cov_qtl <- magicQtlScan(magic_phen, "days.to.bolt",
                              covariates = "bolt.to.flower")
 
 ggplot(bolt_cov_qtl, aes(bp/1e6, -log10(p))) +
@@ -229,14 +249,17 @@ less convincing.
 
 ### Using SNP covariates
 
-The above result also suggests that different QTL might explain common variance. 
-This can be explored by using the SNPs as covariates in the model:
+We might also want to explore whereas different SNPs explain common variance in 
+our trait. 
+
+To explore this hypothesis, we can also use other markers as covariates in the 
+QTL model:
 
 ```{r}
-# Run QTL scan conditional on the peak marker on Chr1
-peak1 <- bolt_qtl %>% filter(chromosome == 1) %>% arrange(p) %>% slice(1) %>% .$marker
-bolt_snp_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt",
-                             snp_cond = peak1)
+# Run QTL scan conditional on the peak marker on Chr5
+peak5 <- bolt_qtl %>% filter(chromosome == 5) %>% arrange(p) %>% slice(1) %>% .$marker
+bolt_snp_qtl <- magicQtlScan(magic_phen, "days.to.bolt",
+                             marker_cov = peak5)
 
 # Plot
 ggplot(bolt_snp_qtl, aes(bp/1e6, -log10(p))) +
@@ -246,9 +269,9 @@ ggplot(bolt_snp_qtl, aes(bp/1e6, -log10(p))) +
   geom_line(data = bolt_qtl, aes(colour = "single trait"))
 ```
 
-Since the two other QTL on Chr4 and Chr5 remain after taking into account the 
-contribution of the QTL on Chr1, it suggests that they explain extra phenotypic 
-variance not captured by the QTL on Chr1.
+Since the two other QTL on Chr1 and Chr4 remain after taking into account the 
+contribution of the QTL on Chr5, it suggests that they explain extra phenotypic 
+variance not captured by that QTL.
 
 
 ### Custom models
@@ -272,9 +295,9 @@ make your own implementation, by accessing the data in the _MagicGenPhen_ object
 For example, here is a "manual" implementation of the basic QTL scan:
 
 ```{r}
-phenotypes <- getPhenotypes(magic_geno_phen)
-genotypes <- getGenotypes(magic_geno_phen)
-markers <- getMarkers(magic_geno_phen)
+phenotypes <- getPhenotypes(magic_phen)
+genotypes <- getProbGenotypes(magic_phen)
+markers <- getMarkers(magic_phen)
 
 # Run the association test for each marker and retrieve the p-value
 pvals <- sapply(genotypes, function(GEN, PHEN){
@@ -301,7 +324,86 @@ ggplot(pvals, aes(bp/1e6, -log10(p))) +
 ```
 
 
+# Estimating QTL effect sizes
+
+Once a significant QTL peak is identified, we might be interested in what the 
+predicted effect of each allele is in our phenotype. Because the MAGIC line 
+genotypes in each marker are assigned to each parent as a probability, this 
+has to be done by a probabilistic "phenotype imputation". Details of the 
+method can be found in 
+[Kover P .. Mott R (2009)](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551),
+but essentially, we can use the function `estimateFounderEffect()` to achieve 
+this goal:
+
+```{r}
+# Predicted effect of QTL on chr5 identified previously
+peak5_effect <- estimateFounderEffect(magic_phen, "days.to.bolt", peak5)
+
+head(peak5_effect)
+```
+
+This returns a `data.frame` with the predicted contribution of each accession 
+to the phenotype. Because this is probabilistic in nature, the method relies 
+on repeating this estimate several times (500 by default), and so we can 
+plot a summary of the estimate like so:
+
+```{r}
+ggplot(peak5_effect, aes(accession, mean_phenotype)) +
+  geom_pointrange(stat = "summary", fun.data = "median_hilow")
+```
+
+We can see from this example that, at this locus:
+
+* The _Zu_ allele should result in later-flowering (~35 days)
+* The _Ler_ allele should result in early-flowering (~12 days)
+
+The errorbars also show that some estimates are better than others. 
+
+Another trick that can be used is to add what the SNP allele is for each of 
+the founder accessions. As shown before, this information is stored in the 
+`MagicGenPhen` object and can be returned by the `getFounderGenotypes()` function.
+
+Here is how to achieve this with ggplot2:
+
+```{r}
+ggplot(peak5_effect, aes(accession, mean_phenotype)) +
+  geom_pointrange(stat = "summary", fun.data = "median_hilow") +
+  geom_text(data = getFounderGenotypes(magic_phen)[[peak5]], 
+            aes(y = 20, label = allele, colour = allele)) +
+  scale_color_manual(values = c("black", "red3")) +
+  theme(legend.position = "none")
+```
+
+This nicely shows that the effect of the SNP allele is not that well correlated 
+with the predicted effect of the founder allele. For example, accessions 
+_Kn_ and _Zu_ have very different predicted flowering time contributions, but 
+they both have the same SNP genotype at this marker.
 
 
+Another way to consider this, is to group the MAGIC lines by their SNP allele and 
+plot the phenotype distributions for this. This can be achieved by another 
+function called `inferMagicFounder()`, which assigns each MAGIC line to a single
+founder, based on some probability threshold (0.5 by default). 
 
+```{r}
+peak5_inferred <- inferMagicFounder(magic_phen, peak5)
 
+head(peak5_inferred)
+```
+
+This table thus assigns each MAGIC line to **one** founder only, if the 
+probability of being that founder is greater than 50%. The threshold can 
+be increased, and this usually results in more MAGIC lines not having 
+an assigned parental genotype. 
+
+This table also returns the SNP genotypes for that marker. Therefore, we can 
+produce the phenotype distribution grouped by SNP allele:
+
+```{r}
+ggplot(peak5_inferred, aes(allele, days.to.bolt)) +
+  geom_boxplot()
+```
+
+From this we can see that the average (or median) phenotype of the two 
+alleles (C and T) are not that different, consistent with a lack of correlation 
+in the predicted accession effects above. 
