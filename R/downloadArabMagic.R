@@ -2,7 +2,7 @@
 #' 
 #' This function downloads SNP genotypes for 1254 SNPs typed with GoldenGate 
 #' technology and reported in Kover et. al (2009). Files are downloaded from
-#' http://mus.well.ox.ac.uk/POOLING/ARABIDOPSIS/FOUNDER/GENOTYPES/
+#' http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 #'
 #' @param save_dir directory to save all files.
 #' @param tidy whether or not to "tidy" the retrieved files. 
