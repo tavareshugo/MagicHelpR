@@ -12,7 +12,7 @@ setGeneric("estimateFounderEffect",
 
 
 
-#' @return a data.frame with phenotype estimates for each founder accession. 
+#' @return a data.frame with imputed phenotypes for each founder accession. 
 #' @export
 #' @docType methods
 #' @rdname estimateFounderEffect
@@ -48,7 +48,7 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
     data.frame(accession = rownames(S), n = N, mean_phenotype = mean_pheno)
     
   }, phenotype) %>%
-    bind_rows()
+    bind_rows(.id = "rep")
 
 })
 
