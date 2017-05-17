@@ -29,7 +29,7 @@ setMethod("addPhenotypes", "MagicGen",
             }
             
             # Ensure x is a data.frame (to ensure compatibility with tbl objects)
-            x <- as.data.frame(x)
+            phenotypes <- as.data.frame(phenotypes)
             
             # Get IDs of MAGIC lines
             phenotypes <- rename_(phenotypes, magic = id)
