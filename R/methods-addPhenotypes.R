@@ -28,6 +28,9 @@ setMethod("addPhenotypes", "MagicGen",
               stop("Phenotypes are already present. Consider re-running 'magicFounderReconstruct()'.")
             }
             
+            # Ensure x is a data.frame (to ensure compatibility with tbl objects)
+            x <- as.data.frame(x)
+            
             # Get IDs of MAGIC lines
             phenotypes <- rename_(phenotypes, magic = id)
             ids <- as.character(phenotypes$magic)
