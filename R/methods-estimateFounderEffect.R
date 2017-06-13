@@ -4,10 +4,19 @@
 #' @param phenotype the phenotype to get the results from.
 #' @param marker the SNP marker to estimate the effects for.
 #' @param n_samples number of Monte Carlo samples to draw.
+#' @param summarise whether or not to report summarised results. The summarised 
+#' output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
+#' imputations. The two percentiles define the 95% range of the estimate, which 
+#' can be used as a confidence interval to report accuracy of the estimates. 
+#' Default: TRUE
+#' @param standardised whether or not the phenotypic values should be standardised 
+#' to the mean. In that case the result reflects how many standard deviations 
+#' the estimated effect deviates from the observed trait mean. Default: TRUE
 #'
 #' @rdname estimateFounderEffect
 setGeneric("estimateFounderEffect", 
-           function(x, phenotype, marker, n_samples = 500) 
+           function(x, phenotype, marker, n_samples = 500, 
+                    summarised = TRUE, standardised = TRUE) 
              standardGeneric("estimateFounderEffect"))
 
 
@@ -20,7 +29,8 @@ setGeneric("estimateFounderEffect",
 #' @examples
 #' ...
 setMethod("estimateFounderEffect", "MagicGenPhen", 
-          function(x, phenotype, marker, n_samples = 500){
+          function(x, phenotype, marker, n_samples = 500, 
+                   summarised = TRUE, standardised = TRUE){
   
   phenotype <- getPhenotypes(x)[, phenotype]
   gen_prob <- getProbGenotypes(x)[[marker]]
@@ -45,10 +55,33 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
     S <- x %*% phen
     mean_pheno <- ifelse(N > 0, S/N, NA)
     
-    data.frame(accession = rownames(S), n = N, mean_phenotype = mean_pheno)
+    data.frame(accession = rownames(S), n = N, effect = mean_pheno)
     
   }, phenotype) %>%
     bind_rows(.id = "rep")
+  
+  # Standardise the trait if requested
+  if(standardised){
+    estimated_effect <- estimated_effect %>% 
+      filter(!is.na(effect)) %>% 
+      group_by(rep) %>% 
+      mutate(effect_standard = (effect - mean(phenotype))/sd(phenotype)) %>% 
+      ungroup()
+  }
+  
+  # Summarise if requested
+  if(summarised){
+    estimated_effect <- estimated_effect %>% 
+    group_by(accession) %>% 
+      summarise(effect_mean = mean(effect_standard),
+                effect_up = quantile(effect_standard, 0.975),
+                effect_lo = quantile(effect_standard, 0.025),
+                n = median(n)) %>% 
+      mutate(accession = reorder(accession, effect_mean)) %>% 
+      ungroup()
+  }
+  
+  return(estimated_effect)
 
 })
 
