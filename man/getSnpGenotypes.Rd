@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getSnpGenotypes}
 \alias{getSnpGenotypes}
-\title{Retrive SNP genotypes of the MAGIC lines from a MagicGen object}
+\title{Retrieve SNP genotypes of the MAGIC lines from a MagicGen object}
 \usage{
 getSnpGenotypes(x)
 }
@@ -13,5 +13,5 @@ getSnpGenotypes(x)
 a list of genotypes SNP.
 }
 \description{
-Retrive SNP genotypes of the MAGIC lines from a MagicGen object
+Retrieve SNP genotypes of the MAGIC lines from a MagicGen object
 }

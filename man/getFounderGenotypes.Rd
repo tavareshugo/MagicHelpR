@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getFounderGenotypes}
 \alias{getFounderGenotypes}
-\title{Retrive SNP genotypes of MAGIC founders from a MagicGen object}
+\title{Retrieve SNP genotypes of MAGIC founders from a MagicGen object}
 \usage{
 getFounderGenotypes(x)
 }
@@ -13,5 +13,5 @@ getFounderGenotypes(x)
 a list of genotypes for each founder accession.
 }
 \description{
-Retrive SNP genotypes of MAGIC founders from a MagicGen object
+Retrieve SNP genotypes of MAGIC founders from a MagicGen object
 }

@@ -1,4 +1,4 @@
-#' Retrive phenotypes from a MagicGen object
+#' Retrieve phenotypes from a MagicGenPhen object
 #'
 #' @param x an object of class "MagicGen".
 #'
@@ -9,7 +9,7 @@ setGeneric("getPhenotypes", function(x) standardGeneric("getPhenotypes"))
 setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 
 
-#' Retrive SNP genotypes of the MAGIC lines from a MagicGen object
+#' Retrieve SNP genotypes of the MAGIC lines from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'
@@ -20,7 +20,7 @@ setGeneric("getSnpGenotypes", function(x) standardGeneric("getSnpGenotypes"))
 setMethod("getSnpGenotypes", "MagicGen", function(x) x@snp_genotypes)
 
 
-#' Retrive genotype probabilities for the MAGIC lines from a MagicGen object
+#' Retrieve genotype probabilities for the MAGIC lines from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'
@@ -31,7 +31,7 @@ setGeneric("getProbGenotypes", function(x) standardGeneric("getProbGenotypes"))
 setMethod("getProbGenotypes", "MagicGen", function(x) x@prob_genotypes)
 
 
-#' Retrive SNP genotypes of MAGIC founders from a MagicGen object
+#' Retrieve SNP genotypes of MAGIC founders from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'
@@ -42,7 +42,7 @@ setGeneric("getFounderGenotypes", function(x) standardGeneric("getFounderGenotyp
 setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
 
 
-#' Retrive markers from a MagicGen object
+#' Retrieve markers from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'

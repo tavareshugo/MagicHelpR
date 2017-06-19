@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getPhenotypes}
 \alias{getPhenotypes}
-\title{Retrive phenotypes from a MagicGen object}
+\title{Retrieve phenotypes from a MagicGenPhen object}
 \usage{
 getPhenotypes(x)
 }
@@ -13,5 +13,5 @@ getPhenotypes(x)
 data.frame of phenotypes
 }
 \description{
-Retrive phenotypes from a MagicGen object
+Retrieve phenotypes from a MagicGenPhen object
 }

@@ -4,12 +4,13 @@
 \name{estimateFounderEffect}
 \alias{estimateFounderEffect}
 \alias{estimateFounderEffect,MagicGenPhen-method}
-\title{Estimate founder effect based on probabilistic sampling}
+\title{Estimate founder QTL effect}
 \usage{
-estimateFounderEffect(x, phenotype, marker, n_samples = 500)
+estimateFounderEffect(x, phenotype, marker, n_samples = 500,
+  summarised = TRUE, standardised = TRUE)
 
 \S4method{estimateFounderEffect}{MagicGenPhen}(x, phenotype, marker,
-  n_samples = 500)
+  n_samples = 500, summarised = TRUE, standardised = TRUE)
 }
 \arguments{
 \item{x}{an object of class MagicData.}
@@ -19,12 +20,27 @@ estimateFounderEffect(x, phenotype, marker, n_samples = 500)
 \item{marker}{the SNP marker to estimate the effects for.}
 
 \item{n_samples}{number of Monte Carlo samples to draw.}
+
+\item{standardised}{whether or not the phenotypic values should be standardised 
+to the mean. In that case the result reflects how many standard deviations 
+the estimated effect deviates from the observed trait mean. Default: TRUE}
+
+\item{summarise}{whether or not to report summarised results. The summarised 
+output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
+imputations. The two percentiles define the 95% range of the estimate, which 
+can be used as a confidence interval to report accuracy of the estimates. 
+Default: TRUE}
 }
 \value{
-a data.frame with phenotype estimates for each founder accession.
+a data.frame with imputed phenotypes for each founder accession.
 }
 \description{
-Estimate founder effect based on probabilistic sampling
+This function estimates the phenotypic effect of each accession's allele at 
+a particular marker. It is based on the probabilistic assignment of each 
+MAGIC line to a single accession. The procedure is repeated several times to 
+produce an average estimate and associated uncertainty. This function is based 
+on the function \code(imputed.one.way.anova()) from the scripts available at 
+http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 }
 \examples{
 ...

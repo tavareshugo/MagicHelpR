@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getProbGenotypes}
 \alias{getProbGenotypes}
-\title{Retrive genotype probabilities for the MAGIC lines from a MagicGen object}
+\title{Retrieve genotype probabilities for the MAGIC lines from a MagicGen object}
 \usage{
 getProbGenotypes(x)
 }
@@ -13,5 +13,5 @@ getProbGenotypes(x)
 a list of genotype probabilities for every SNP.
 }
 \description{
-Retrive genotype probabilities for the MAGIC lines from a MagicGen object
+Retrieve genotype probabilities for the MAGIC lines from a MagicGen object
 }

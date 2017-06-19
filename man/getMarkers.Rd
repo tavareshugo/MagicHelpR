@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getMarkers}
 \alias{getMarkers}
-\title{Retrive markers from a MagicGen object}
+\title{Retrieve markers from a MagicGen object}
 \usage{
 getMarkers(x)
 }
@@ -13,5 +13,5 @@ getMarkers(x)
 a data.frame of marker names and positions.
 }
 \description{
-Retrive markers from a MagicGen object
+Retrieve markers from a MagicGen object
 }

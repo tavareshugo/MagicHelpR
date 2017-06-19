@@ -18,7 +18,7 @@ files are downloaded to a directory of choice.
 \description{
 This function downloads SNP genotypes for 1254 SNPs typed with GoldenGate 
 technology and reported in Kover et. al (2009). Files are downloaded from
-http://mus.well.ox.ac.uk/POOLING/ARABIDOPSIS/FOUNDER/GENOTYPES/
+http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 }
 \examples{
 downloadArabMagic("~/temp/magic_snp_1k")
