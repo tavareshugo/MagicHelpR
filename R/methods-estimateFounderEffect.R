@@ -70,19 +70,27 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
   # Standardise the trait if requested
   if(standardised){
     estimated_effect <- estimated_effect %>% 
-      filter(!is.na(effect)) %>% 
       group_by(rep) %>% 
       mutate(effect_standard = (effect - mean(phenotype))/sd(phenotype)) %>% 
       ungroup()
   }
   
   # Summarise if requested
-  if(summarised){
+  if(summarised & standardised){
     estimated_effect <- estimated_effect %>% 
     group_by(accession) %>% 
-      summarise(effect_mean = mean(effect_standard),
-                effect_up = quantile(effect_standard, 0.975),
-                effect_lo = quantile(effect_standard, 0.025),
+      summarise(effect_mean = mean(effect_standard, na.rm = TRUE),
+                effect_up = quantile(effect_standard, 0.975, na.rm = TRUE),
+                effect_lo = quantile(effect_standard, 0.025, na.rm = TRUE),
+                n = median(n)) %>% 
+      mutate(accession = reorder(accession, effect_mean)) %>% 
+      ungroup()
+  } else if(summarised & !standardised){
+    estimated_effect <- estimated_effect %>% 
+      group_by(accession) %>% 
+      summarise(effect_mean = mean(effect, na.rm = TRUE),
+                effect_up = quantile(effect, 0.975, na.rm = TRUE),
+                effect_lo = quantile(effect, 0.025, na.rm = TRUE),
                 n = median(n)) %>% 
       mutate(accession = reorder(accession, effect_mean)) %>% 
       ungroup()
