@@ -4,7 +4,7 @@
 #' a particular marker. It is based on the probabilistic assignment of each 
 #' MAGIC line to a single accession. The procedure is repeated several times to 
 #' produce an average estimate and associated uncertainty. This function is based 
-#' on the function \code(imputed.one.way.anova()) from the scripts available at 
+#' on the function \code{imputed.one.way.anova()} from the scripts available at 
 #' http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 #'
 #' @param x an object of class MagicData.

@@ -7,10 +7,11 @@
 \title{Estimate founder QTL effect}
 \usage{
 estimateFounderEffect(x, phenotype, marker, n_samples = 500,
-  summarised = TRUE, standardised = TRUE)
+  summarised = TRUE, standardised = TRUE, covariates = NULL)
 
 \S4method{estimateFounderEffect}{MagicGenPhen}(x, phenotype, marker,
-  n_samples = 500, summarised = TRUE, standardised = TRUE)
+  n_samples = 500, summarised = TRUE, standardised = TRUE,
+  covariates = NULL)
 }
 \arguments{
 \item{x}{an object of class MagicData.}
@@ -24,6 +25,11 @@ estimateFounderEffect(x, phenotype, marker, n_samples = 500,
 \item{standardised}{whether or not the phenotypic values should be standardised 
 to the mean. In that case the result reflects how many standard deviations 
 the estimated effect deviates from the observed trait mean. Default: TRUE}
+
+\item{covariates}{optional name of column(s) from phenotypes to use as 
+covariate(s). The effect will be estimated from the residuals of a standard 
+linear model between the trait of interest and the specified covariates. 
+Default: NULL}
 
 \item{summarise}{whether or not to report summarised results. The summarised 
 output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
@@ -39,7 +45,7 @@ This function estimates the phenotypic effect of each accession's allele at
 a particular marker. It is based on the probabilistic assignment of each 
 MAGIC line to a single accession. The procedure is repeated several times to 
 produce an average estimate and associated uncertainty. This function is based 
-on the function \code(imputed.one.way.anova()) from the scripts available at 
+on the function \code{imputed.one.way.anova()} from the scripts available at 
 http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 }
 \examples{
