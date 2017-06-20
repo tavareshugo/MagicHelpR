@@ -19,11 +19,16 @@
 #' @param standardised whether or not the phenotypic values should be standardised 
 #' to the mean. In that case the result reflects how many standard deviations 
 #' the estimated effect deviates from the observed trait mean. Default: TRUE
+#' @param covariates optional name of column(s) from phenotypes to use as 
+#' covariate(s). The effect will be estimated from the residuals of a standard 
+#' linear model between the trait of interest and the specified covariates. 
+#' Default: NULL
 #'
 #' @rdname estimateFounderEffect
 setGeneric("estimateFounderEffect", 
            function(x, phenotype, marker, n_samples = 500, 
-                    summarised = TRUE, standardised = TRUE) 
+                    summarised = TRUE, standardised = TRUE,
+                    covariates = NULL) 
              standardGeneric("estimateFounderEffect"))
 
 
@@ -37,10 +42,17 @@ setGeneric("estimateFounderEffect",
 #' ...
 setMethod("estimateFounderEffect", "MagicGenPhen", 
           function(x, phenotype, marker, n_samples = 500, 
-                   summarised = TRUE, standardised = TRUE){
+                   summarised = TRUE, standardised = TRUE,
+                   covariates = NULL){
   
   phenotype <- getPhenotypes(x)[, phenotype]
   gen_prob <- getProbGenotypes(x)[[marker]]
+  
+  # If covariates are specified, get residuals of linear model
+  if(!is.null(covariates)){
+    covariates <- as.matrix(getPhenotypes(x)[,covariates])
+    phenotype <- lm(phenotype ~ covariates) %>% resid()
+  }
   
   # Make a design matrix for founders
   founder_matrix <- matrix(0, ncol = 19, nrow = 19)
