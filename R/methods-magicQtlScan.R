@@ -242,3 +242,26 @@ setMethod("scanQtl", "MagicGenPhen",
   if(method == "probability") return(getProbGenotypes(x))
   if(method == "allele") return(getSnpGenotypes(x))
 }
+
+
+#' Make a QTL scan - deprecated function
+#'
+#' @param ... placeholder for any options given by user
+#'
+#' @rdname magicQtlScan
+setGeneric("magicQtlScan", function(...) 
+  standardGeneric("magicQtlScan"))
+
+
+#' @return error message.
+#' @export
+#' @docType methods
+#' @rdname magicQtlScan
+#'
+setMethod("magicQtlScan", "MagicGenPhen", 
+          function(...){
+            
+            
+            stop("This function is deprecated. Please use `scanQtl` function instead.")
+            
+          })
