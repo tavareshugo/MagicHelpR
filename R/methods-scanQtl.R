@@ -42,7 +42,7 @@ setMethod("scanQtl", "MagicGenPhen",
   qtl_models <- .makeQtlModel(phenotype, covariates, marker_cov, h1, h0)
 
   # Function to fit the linear model to all SNPs using parallel mclapply
-  allSnpScan <- function(VARS = model_vars, GEN = .getGenotypes(x, method),
+allSnpScan <- function(VARS = model_vars, GEN = getGenotypes(x, method),
                          H1 = qtl_models$h1, H0 = qtl_models$h0, Cores = cores){
     parallel::mclapply(GEN, .qtlFit, VARS, H1, H0,
                        mc.cores = Cores) %>%
@@ -110,12 +110,12 @@ setMethod("scanQtl", "MagicGenPhen",
   # Check that all requested variables exist
   if(!(phenotype %in% colnames(getPhenotypes(x)))) stop("Phenotype ", phenotype, " does not exist.")
   if(any(!(covariates %in% colnames(getPhenotypes(x))))) stop("Some covariates do not exist.")
-  if(any(!(marker_cov %in% names(.getGenotypes(x, method))))) stop("Some specified marker_cov do not exist.")
+  if(any(!(marker_cov %in% names(getGenotypes(x, method))))) stop("Some specified marker_cov do not exist.")
 
   # Make lists of phenotype, covariates and snp matrices
   phenotype_list <- lapply(phenotype, function(i, x) getPhenotypes(x)[,i], x = x)
   covariates_list <- lapply(covariates, function(i, x) getPhenotypes(x)[,i], x = x)
-  snp_list <- lapply(marker_cov, function(i, x) .getGenotypes(x, method)[[i]], x = x)
+  snp_list <- lapply(marker_cov, function(i, x) getGenotypes(x, method)[[i]], x = x)
 
   # Concatenate the lists and name elements appropriately
   model_vars <- c(phenotype_list, covariates_list, snp_list)
@@ -219,28 +219,6 @@ setMethod("scanQtl", "MagicGenPhen",
                     p = qtl_aov$`Pr(>F)`[2],
                     r2_h1 = summary(fit1)$adj.r.squared,
                     r2_h0 = summary(fit0)$adj.r.squared))
-}
-
-
-#' Accessor function to retrieve genotypes from MagicGenPhen object
-#'
-#' This is an internal function, useful to retrieve either SNP or
-#' probability genotypes.
-#'
-#' @param x an object of class MagicGenPhen
-#' @param method which type of genotype to retrieve.
-#'
-#' @return genotypes from MagicGenPhen object
-.getGenotypes <- function(x, method = c("probability", "allele")){
-
-  # Define which method to use for genotypes
-  method <- method[1]
-  if(any(!(method %in% c("probability", "allele")))){
-    stop("method not recognised: ", method)
-  }
-
-  if(method == "probability") return(getProbGenotypes(x))
-  if(method == "allele") return(getSnpGenotypes(x))
 }
 
 
