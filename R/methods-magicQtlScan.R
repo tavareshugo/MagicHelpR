@@ -15,21 +15,21 @@
 #' from a SNP). Default: probability.
 #' @param cores number of cores to use (Windows only supports 1 core). Default: 1
 #'
-#' @rdname magicQtlScan
-setGeneric("magicQtlScan", function(x, phenotype, covariates = NULL, marker_cov = NULL, 
+#' @rdname scanQtl
+setGeneric("scanQtl", function(x, phenotype, covariates = NULL, marker_cov = NULL, 
                                     h1 = NULL, h0 = NULL, perm = 0, 
                                     method = c("probability", "allele"), cores = 1) 
-  standardGeneric("magicQtlScan"))
+  standardGeneric("scanQtl"))
 
 
 #' @return a data.frame with the QTL results.
 #' @export
 #' @docType methods
-#' @rdname magicQtlScan
+#' @rdname scanQtl
 #'
 #' @examples
 #' ...
-setMethod("magicQtlScan", "MagicGenPhen", 
+setMethod("scanQtl", "MagicGenPhen", 
           function(x, phenotype, covariates = NULL, marker_cov = NULL, 
                    h1 = NULL, h0 = NULL, perm = 0, 
                    method = c("probability", "allele"), cores = 1){
