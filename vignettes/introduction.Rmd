@@ -131,7 +131,7 @@ kept only for those individuals that had a phenotype.
 magic_phen
 ```
 
-The reason to separate these two functions, is that the "MagicGen" object only 
+The reason to separate these two objects, is that the "MagicGen" object only 
 has to be created once, and different tables of phenotypes can then be added to 
 it later on. For example, the user might consider to create this object once and 
 then save it as an `.rds` object, to use later on in future analysis:
@@ -152,7 +152,7 @@ magic_phen2 <- magicFounderReconstruct(snp_dir = "~/temp/magic_intro/",
 
 ## Performing standard QTL mapping
 
-The function `magicQtlScan()` performs a basic association analysis using an 
+The function `scanQtl()` performs a basic association analysis using an 
 F-test to compare two linear models, one with the genotype probabilities for 
 each founder accession as explanatory variables and a null model with no 
 explanatory variables (only an intercept).
@@ -161,7 +161,7 @@ For example:
 
 ```{r}
 # QTL scan for days.to.bolt trait
-bolt_qtl <- magicQtlScan(magic_phen, "days.to.bolt")
+bolt_qtl <- scanQtl(magic_phen, "days.to.bolt")
 ```
 
 The function supports the use of multiple cores (not supported on Windows), 
@@ -169,7 +169,7 @@ which can speed the computation:
 
 ```{r, eval = FALSE}
 # QTL scan for days.to.bolt trait
-bolt_qtl <- magicQtlScan(magic_geno_phen, "days.to.bolt", cores = 2)
+bolt_qtl <- scanQtl(magic_phen, "days.to.bolt", cores = 2)
 head(bolt_qtl)
 ```
 
@@ -196,13 +196,13 @@ bolt_qtl %>% arrange(p) %>% slice(1)
 ```
 
 The `r2_h1` column contains the _R^2_ of the linear model for the alternative 
-hypothesis tested, indicating that ~25% of the variance is explained by that 
+hypothesis tested, suggesting that ~25% of the variance is explained by that 
 SNP. 
 
 
 ## Custom models
 
-The `magicQtlScan()` function allows to fit more complex, customised models. You 
+The `scanQtl()` function allows to fit more complex, customised models. You 
 can explicitly specify these models using the same sintax used for the `lm()` 
 function in the base R package. 
 
@@ -219,7 +219,7 @@ qplot(days.to.bolt, bolt.to.flower, data = pheno)
 Indeed, the QTL scan for the two traits picks similar QTL:
 
 ```{r}
-flower_qtl <- magicQtlScan(magic_phen, "bolt.to.flower", cores = 2)
+flower_qtl <- scanQtl(magic_phen, "bolt.to.flower", cores = 2)
 
 ggplot(flower_qtl, aes(bp/1e6, -log10(p))) +
   geom_line() +
@@ -233,9 +233,11 @@ account. For this, we could use one of them as a covariate in the model, for
 example:
 
 ```{r}
-bolt_cov_qtl <- magicQtlScan(magic_phen, "days.to.bolt",
+# Run QTL scan for "days.to.bolt" but adding "bolt.to.flower" as a covariate
+bolt_cov_qtl <- scanQtl(magic_phen, "days.to.bolt",
                              covariates = "bolt.to.flower")
 
+# Make plot
 ggplot(bolt_cov_qtl, aes(bp/1e6, -log10(p))) +
   geom_line(aes(colour = "covariate")) +
   facet_grid(~ chromosome, scales = "free_x", space = "free_x") +
@@ -258,7 +260,7 @@ QTL model:
 ```{r}
 # Run QTL scan conditional on the peak marker on Chr5
 peak5 <- bolt_qtl %>% filter(chromosome == 5) %>% arrange(p) %>% slice(1) %>% .$marker
-bolt_snp_qtl <- magicQtlScan(magic_phen, "days.to.bolt",
+bolt_snp_qtl <- scanQtl(magic_phen, "days.to.bolt",
                              marker_cov = peak5)
 
 # Plot
@@ -276,13 +278,13 @@ variance not captured by that QTL.
 
 ### Custom models
 
-Example to be added...
+(sorry, proper example to be added...)
 
 But essentially you can use the same syntax used in the `lm()` function in the 
 base R package, to define the null and alternative hypothesis of the models 
-being compared (these are the options `h1` and `h0` in the `magicQtlScan()` 
+being compared (these are the options `h1` and `h0` in the `scanQtl()` 
 function). The genotype term is specified as GEN. The message printed when 
-running the above `magicQtlScan()` calls gives examples of how the models are 
+running the above `scanQtl()` calls gives examples of how the models are 
 specified internally. 
 
 This allows for example running models using interaction terms, etc.
@@ -290,7 +292,7 @@ This allows for example running models using interaction terms, etc.
 
 ### Even more customised models
 
-If you feel limited by the capability of the `magicQtlScan()` function, you can 
+If you feel limited by the capability of the `scanQtl()` function, you can 
 make your own implementation, by accessing the data in the _MagicGenPhen_ object. 
 For example, here is a "manual" implementation of the basic QTL scan:
 
@@ -320,7 +322,7 @@ ggplot(pvals, aes(bp/1e6, -log10(p))) +
   geom_line(aes(colour = "manual")) +
   facet_grid(~ chromosome, scales = "free_x", space = "free_x") +
   geom_hline(yintercept = 3.5, linetype = "dotted") +
-  geom_line(data = bolt_qtl, aes(colour = "magicQtlScan"), linetype = "dashed")
+  geom_line(data = bolt_qtl, aes(colour = "scanQtl"), linetype = "dashed")
 ```
 
 
@@ -344,12 +346,18 @@ head(peak5_effect)
 
 This returns a `data.frame` with the predicted contribution of each accession 
 to the phenotype. Because this is probabilistic in nature, the method relies 
-on repeating this estimate several times (500 by default), and so we can 
-plot a summary of the estimate like so:
+on repeating this estimate several times (500 by default). By default, the 
+`estimateFounderEffect()` function returns a summary of these probabilistic 
+estimates and it standardizes the trait as z-scores (i.e. subtracts the mean trait 
+value in the sampled individuals from the estimate and divides by the observed 
+standard deviation - in other words, the values can be read as "standard deviations 
+away from the mean"). 
+
+The result can be plotted like so:
 
 ```{r}
-ggplot(peak5_effect, aes(accession, mean_phenotype)) +
-  geom_pointrange(stat = "summary", fun.data = "median_hilow")
+ggplot(peak5_effect, aes(accession, effect_mean)) +
+  geom_pointrange(aes(ymin = effect_lo, ymax = effect_up))
 ```
 
 We can see from this example that, at this locus:
@@ -359,6 +367,18 @@ We can see from this example that, at this locus:
 
 The errorbars also show that some estimates are better than others. 
 
+If you prefer to have the effect size in the units of your trait, then you could 
+achieve a similar result by:
+
+```{r}
+estimateFounderEffect(magic_phen, "days.to.bolt", peak5, standardised = FALSE) %>% 
+	ggplot(aes(accession, effect_mean)) +
+  geom_pointrange(aes(ymin = effect_lo, ymax = effect_up))
+```
+
+The plot is essentially the same, but now the scale can be read in the original 
+units of "days.to.flower".
+
 Another trick that can be used is to add what the SNP allele is for each of 
 the founder accessions. As shown before, this information is stored in the 
 `MagicGenPhen` object and can be returned by the `getFounderGenotypes()` function.
@@ -366,10 +386,10 @@ the founder accessions. As shown before, this information is stored in the
 Here is how to achieve this with ggplot2:
 
 ```{r}
-ggplot(peak5_effect, aes(accession, mean_phenotype)) +
-  geom_pointrange(stat = "summary", fun.data = "median_hilow") +
+ggplot(peak5_effect, aes(accession, effect_mean)) +
+  geom_pointrange(aes(ymin = effect_lo, ymax = effect_up)) +
   geom_text(data = getFounderGenotypes(magic_phen)[[peak5]], 
-            aes(y = 20, label = allele, colour = allele)) +
+            aes(y = -1, label = allele, colour = allele)) +
   scale_color_manual(values = c("black", "red3")) +
   theme(legend.position = "none")
 ```
@@ -378,7 +398,6 @@ This nicely shows that the effect of the SNP allele is not that well correlated
 with the predicted effect of the founder allele. For example, accessions 
 _Kn_ and _Zu_ have very different predicted flowering time contributions, but 
 they both have the same SNP genotype at this marker.
-
 
 Another way to consider this, is to group the MAGIC lines by their SNP allele and 
 plot the phenotype distributions for this. This can be achieved by another 
@@ -407,3 +426,4 @@ ggplot(peak5_inferred, aes(allele, days.to.bolt)) +
 From this we can see that the average (or median) phenotype of the two 
 alleles (C and T) are not that different, consistent with a lack of correlation 
 in the predicted accession effects above. 
+

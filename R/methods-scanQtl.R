@@ -53,7 +53,7 @@ setMethod("scanQtl", "MagicGenPhen",
   t1 <- proc.time()  # to report time taken
   qtl_scan <- allSnpScan()
   t2 <- proc.time() - t1
-  message("Elapsed time: ", t2[3], "seconds")
+  message("Elapsed time: ", round(t2[3]), " seconds")
 
   # Merge with marker table to get coordinates of each marker
   qtl_scan <- merge(getMarkers(x), qtl_scan)
@@ -146,7 +146,7 @@ setMethod("scanQtl", "MagicGenPhen",
       stop("Both h1 or h0 have to be specified.")
     }
 
-    message("F-test comparing the models: H1: ", h1, " H0: ", h0)
+    message("F-test comparing the models:\n  H1: ", h1, "\n  H0: ", h0)
 
     return(list(h1 = h1, h0 = h0))
 
@@ -155,7 +155,7 @@ setMethod("scanQtl", "MagicGenPhen",
     h1 <- paste(phenotype, "~ GEN")
     h0 <- paste(phenotype, "~ 1")
 
-    message("F-test comparing the models: H1: ", h1, " H0: ", h0)
+    message("F-test comparing the models:\n  H1: ", h1, "\n  H0: ", h0)
 
   } else {
     h1 <- paste0(phenotype, " ~ GEN")
@@ -175,7 +175,7 @@ setMethod("scanQtl", "MagicGenPhen",
 
     }
 
-    message("F-test comparing the models: H1:", h1, " H0:", h0)
+    message("F-test comparing the models:\n  H1:", h1, "\n  H0:", h0)
   }
 
   return(list(h1 = h1, h0 = h0))
