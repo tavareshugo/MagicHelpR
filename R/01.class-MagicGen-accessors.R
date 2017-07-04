@@ -18,6 +18,8 @@ setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 #' @param type which type of genotype to retrieve.
 #'
 #' @return genotypes from MagicGenPhen object
+#' @export
+#' @rdname getGenotypes
 setGeneric("getGenotypes", function(x, type = c("probability", "allele")) standardGeneric("getGenotypes"))
 setMethod("getGenotypes", "MagicGen", function(x, type = c("probability", "allele")){
 
