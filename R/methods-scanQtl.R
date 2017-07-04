@@ -53,7 +53,7 @@ setMethod("scanQtl", "MagicGenPhen",
   t1 <- proc.time()  # to report time taken
   qtl_scan <- allSnpScan()
   t2 <- proc.time() - t1
-  cat("Elapsed time: ", t2[3], "seconds\n")
+  message("Elapsed time: ", t2[3], "seconds")
 
   # Merge with marker table to get coordinates of each marker
   qtl_scan <- merge(getMarkers(x), qtl_scan)
@@ -61,7 +61,7 @@ setMethod("scanQtl", "MagicGenPhen",
 
   ##### Permutations #####
   if(perm > 0){
-    cat("Performing", perm, "permutations. This might take a while...\n")
+    message("Performing ", perm, " permutations. This might take a while...")
 
     # Shuffle phenotypes and covariates
     perm_index <- replicate(perm, sample(length(model_vars[[phenotype]])))
@@ -146,7 +146,7 @@ setMethod("scanQtl", "MagicGenPhen",
       stop("Both h1 or h0 have to be specified.")
     }
 
-    cat("\nF-test comparing the models:\nH1: ", h1, "\nH0: ", h0, "\n")
+    message("F-test comparing the models: H1: ", h1, " H0: ", h0)
 
     return(list(h1 = h1, h0 = h0))
 
@@ -155,7 +155,7 @@ setMethod("scanQtl", "MagicGenPhen",
     h1 <- paste(phenotype, "~ GEN")
     h0 <- paste(phenotype, "~ 1")
 
-    cat("\nF-test comparing the models:\nH1: ", h1, "\nH0: ", h0, "\n")
+    message("F-test comparing the models: H1: ", h1, " H0: ", h0)
 
   } else {
     h1 <- paste0(phenotype, " ~ GEN")
@@ -175,7 +175,7 @@ setMethod("scanQtl", "MagicGenPhen",
 
     }
 
-    cat("\nF-test comparing the models:\nH1:", h1, "\nH0:", h0, "\n")
+    message("F-test comparing the models: H1:", h1, " H0:", h0)
   }
 
   return(list(h1 = h1, h0 = h0))
