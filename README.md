@@ -8,15 +8,16 @@ This might however be useful for anyone using the Arabidopsis MAGIC lines. It
 depends Richard Mott's `happy.hbrem` package, available at:
 http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 
-And essentially implements the same linear model approach in the available 
+The package implements the same linear model approach in the available 
 scripts, but with some more flexibility for specifying models and outputs 
 tabular data that is convenient for downstream analysis and plotting.
 
 To install this package, launch R and issue the following commands:
+
 ```
 #If not already installed, install devtools:
 # install.packages("devtools")
 devtools::install_github("tavareshugo/MagicHelpR")
 ```
 
-There's also a basic [introduction vignette](vignettes/introduction.Rmd).
+There's also a basic [introduction vignette](https://tavareshugo.github.io/MagicHelpR/articles/introduction.html).
