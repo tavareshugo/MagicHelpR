@@ -77,9 +77,9 @@ the following:
 * a table with all the marker names and their locations. This can be accessed 
 with he function `getMarkers()`.
 * a list of SNP genotypes for each marker. This can be accessed with the 
-function `getSnpGenotypes()`.
+function `getGenotypes()` adding the option `type = "allele"`.
 * a list of genotype probabilities for each marker. This can be access with the 
-function `getProbGenotypes`.
+function `getGenotypes()`.
 * a table with SNP genotypes of the founder accessions.
 
 Here are some examples of using these functions to access information from 

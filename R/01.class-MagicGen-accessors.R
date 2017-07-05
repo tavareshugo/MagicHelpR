@@ -90,7 +90,7 @@ setMethod("getMarkers", "MagicGen", function(x) x@markers)
 
 # Set show methods
 setMethod("show", "MagicGen", function(object){
-  gen <- getProbGenotypes(object)
+  gen <- getGenotypes(object)
 
   # Print information
   cat("Object of class", class(object), "\n")
@@ -99,7 +99,7 @@ setMethod("show", "MagicGen", function(object){
 
 setMethod("show", "MagicGenPhen", function(object){
   phen <- getPhenotypes(object)
-  gen <- getProbGenotypes(object)
+  gen <- getGenotypes(object)
 
   # Print information
   cat("Object of class", class(object), "\n")
