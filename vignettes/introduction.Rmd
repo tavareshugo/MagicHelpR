@@ -367,7 +367,7 @@ The result can be plotted like so:
 
 ```{r}
 ggplot(peak5_effect, aes(accession, effect_mean)) +
-  geom_pointrange(aes(ymin = effect_lo, ymax = effect_hi))
+  geom_pointrange(aes(ymin = effect_lo, ymax = effect_up))
 ```
 
 We can see from this example that, at this locus:
@@ -387,7 +387,7 @@ estimateFounderEffect(magic_phen, "days.to.bolt", peak5, standardised = FALSE) %
 ```
 
 The plot is essentially the same, but now the scale can be read in the original 
-units of "days.to.flower", so between ~20 days for _Ler_ and 32 days for _Zu_.
+units of "days.to.flower", so between ~20 days for _Ler_ and ~32 days for _Zu_.
 
 Another trick that can be used is to add what the SNP allele is for each of 
 the founder accessions. As shown before, this information is stored in the 
