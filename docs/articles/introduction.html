@@ -225,7 +225,7 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <pre><code>## F-test comparing the models:
 ##   H1: days.to.bolt ~ GEN
 ##   H0: days.to.bolt ~ 1</code></pre>
-<pre><code>## Elapsed time: 27 seconds</code></pre>
+<pre><code>## Elapsed time: 29 seconds</code></pre>
 <p>The function supports the use of multiple cores (not supported on Windows), which can speed the computation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># QTL scan for days.to.bolt trait</span>
 bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/scanQtl.html">scanQtl</a></span>(magic_phen, <span class="st">"days.to.bolt"</span>, <span class="dt">cores =</span> <span class="dv">2</span>)
@@ -265,7 +265,7 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <pre><code>## F-test comparing the models:
 ##   H1: bolt.to.flower ~ GEN
 ##   H0: bolt.to.flower ~ 1</code></pre>
-<pre><code>## Elapsed time: 15 seconds</code></pre>
+<pre><code>## Elapsed time: 17 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(flower_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>() +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/facet_grid">facet_grid</a></span>(~<span class="st"> </span>chromosome, <span class="dt">scales =</span> <span class="st">"free_x"</span>, <span class="dt">space =</span> <span class="st">"free_x"</span>) +
@@ -279,7 +279,7 @@ bolt_cov_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <pre><code>## F-test comparing the models:
 ##   H1:days.to.bolt ~ GEN + bolt.to.flower
 ##   H0:days.to.bolt ~ bolt.to.flower</code></pre>
-<pre><code>## Elapsed time: 27 seconds</code></pre>
+<pre><code>## Elapsed time: 29 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make plot</span>
 <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(bolt_cov_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">colour =</span> <span class="st">"covariate"</span>)) +
@@ -304,7 +304,7 @@ bolt_snp_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <pre><code>## F-test comparing the models:
 ##   H1:days.to.bolt ~ GEN + MN5_3177504
 ##   H0:days.to.bolt ~ MN5_3177504</code></pre>
-<pre><code>## Elapsed time: 29 seconds</code></pre>
+<pre><code>## Elapsed time: 30 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Plot</span>
 <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(bolt_snp_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">colour =</span> <span class="st">"FRI_2343"</span>)) +
@@ -371,12 +371,12 @@ peak5_effect &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <pre><code>## # A tibble: 6 x 5
 ##   accession effect_mean   effect_up  effect_lo     n
 ##      &lt;fctr&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
-## 1       Bur -0.21284724 -0.19622847 -0.2328602    37
-## 2       Can  0.74962781  0.81373026  0.5501540     7
-## 3       Col  0.51475307  0.55545201  0.4126393    15
-## 4        Ct -0.11370280  0.04051939 -0.2199309    15
-## 5       Edi  0.63617183  0.88845877  0.4138987     9
-## 6        Hi -0.08856361 -0.01309892 -0.1389464    37</code></pre>
+## 1       Bur -0.21233826 -0.19005992 -0.2328602    37
+## 2       Can  0.75096480  0.81373026  0.5501540     7
+## 3       Col  0.51787874  0.58711770  0.4480016    15
+## 4        Ct -0.11876073  0.04019792 -0.2396967    15
+## 5       Edi  0.63409584  0.89298857  0.3709938     9
+## 6        Hi -0.08670452 -0.01289355 -0.1443364    37</code></pre>
 <p>This returns a <code>data.frame</code> with the predicted contribution of each accession to the phenotype. Because this is probabilistic in nature, the method relies on repeating this estimate several times (500 by default). By default, the <code><a href="../reference/estimateFounderEffect.html">estimateFounderEffect()</a></code> function returns a summary of these probabilistic estimates with a mean and lower and upper “confidence interval” for the estimate.</p>
 <p>By default, it also standardizes the trait as z-scores (i.e. subtracts the mean trait value observed in the sampled individuals from the estimate and divides by the observed standard deviation - in other words, the values can be read as “standard deviations away from the mean”).</p>
 <p>The result can be plotted like so:</p>
