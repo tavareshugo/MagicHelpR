@@ -11,7 +11,7 @@
 #' @param phenotype the phenotype to get the results from.
 #' @param marker the SNP marker to estimate the effects for.
 #' @param n_samples number of Monte Carlo samples to draw.
-#' @param summarise whether or not to report summarised results. The summarised
+#' @param summarised whether or not to report summarised results. The summarised
 #' output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
 #' imputations. The two percentiles define the 95% range of the estimate, which
 #' can be used as a confidence interval to report accuracy of the estimates.
@@ -89,6 +89,8 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
 
   # Summarise if requested
   if(summarised & standardised){
+
+  	# Summarise the imputed phenotype
     estimated_effect <- estimated_effect %>%
     group_by(accession) %>%
       summarise(effect_mean = mean(effect_standard, na.rm = TRUE),
@@ -97,6 +99,11 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
                 n = median(n)) %>%
       mutate(accession = reorder(accession, effect_mean)) %>%
       ungroup()
+
+    # Get the founder SNP genotypes and add to output
+    founder_gen <- getFounderGenotypes(x)[[marker]]
+    estimated_effect <- left_join(estimated_effect, founder_gen, by = "accession")
+
   } else if(summarised & !standardised){
     estimated_effect <- estimated_effect %>%
       group_by(accession) %>%
@@ -106,6 +113,11 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
                 n = median(n)) %>%
       mutate(accession = reorder(accession, effect_mean)) %>%
       ungroup()
+
+    # Get the founder SNP genotypes and add to output
+    founder_gen <- getFounderGenotypes(x)[[marker]]
+    estimated_effect <- left_join(estimated_effect, founder_gen, by = "accession")
+
   }
 
   return(estimated_effect)
