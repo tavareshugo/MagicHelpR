@@ -390,19 +390,19 @@ The plot is essentially the same, but now the scale can be read in the original
 units of "days.to.flower", so between ~20 days for _Ler_ and ~32 days for _Zu_.
 
 Another trick that can be used is to add what the SNP allele is for each of 
-the founder accessions. As shown before, this information is stored in the 
-`MagicGenPhen` object and can be returned by the `getFounderGenotypes()` function.
-
-Here is how to achieve this with ggplot2:
+the founder accessions. This is also available on the output from `estimateFounderEffect()`
+function, and can be visualised like so:
 
 ```{r}
 ggplot(peak5_effect, aes(accession, effect_mean)) +
   geom_pointrange(aes(ymin = effect_lo, ymax = effect_up)) +
-  geom_text(data = getFounderGenotypes(magic_phen)[[peak5]], 
-            aes(y = -1, label = allele, colour = allele)) +
+  geom_text(aes(y = -1, label = allele, colour = allele)) +
   scale_color_manual(values = c("black", "red3")) +
   theme(legend.position = "none")
 ```
+
+(note that you could also get the founder genotypes with 
+`getFounderGenotypes(magic_phen)[[peak5]]`)
 
 This nicely shows that the effect of the SNP allele is not that well correlated 
 with the predicted effect of the founder allele. For example, accessions 

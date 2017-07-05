@@ -90,6 +90,9 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
   # Summarise if requested
   if(summarised & standardised){
 
+  	# Get the founder SNP genotypes and add to output
+  	founder_gen <- getFounderGenotypes(x)[[marker]]
+
   	# Summarise the imputed phenotype
     estimated_effect <- estimated_effect %>%
     group_by(accession) %>%
@@ -97,27 +100,25 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
                 effect_up = quantile(effect_standard, 0.975, na.rm = TRUE),
                 effect_lo = quantile(effect_standard, 0.025, na.rm = TRUE),
                 n = median(n)) %>%
+    	left_join(founder_gen, by = "accession") %>%
       mutate(accession = reorder(accession, effect_mean)) %>%
       ungroup()
 
-    # Get the founder SNP genotypes and add to output
-    founder_gen <- getFounderGenotypes(x)[[marker]]
-    estimated_effect <- left_join(estimated_effect, founder_gen, by = "accession")
 
   } else if(summarised & !standardised){
-    estimated_effect <- estimated_effect %>%
+
+  	# Get the founder SNP genotypes and add to output
+  	founder_gen <- getFounderGenotypes(x)[[marker]]
+
+  	estimated_effect <- estimated_effect %>%
       group_by(accession) %>%
       summarise(effect_mean = mean(effect, na.rm = TRUE),
                 effect_up = quantile(effect, 0.975, na.rm = TRUE),
                 effect_lo = quantile(effect, 0.025, na.rm = TRUE),
                 n = median(n)) %>%
+  		left_join(founder_gen, by = "accession") %>%
       mutate(accession = reorder(accession, effect_mean)) %>%
       ungroup()
-
-    # Get the founder SNP genotypes and add to output
-    founder_gen <- getFounderGenotypes(x)[[marker]]
-    estimated_effect <- left_join(estimated_effect, founder_gen, by = "accession")
-
   }
 
   return(estimated_effect)
