@@ -18,12 +18,12 @@ addPhenotypes(x, phenotypes, id)
 \item{id}{the column name containing the MAGIC IDs in the 'phenotypes' table.}
 }
 \value{
-a a 'MagicGen' object with phenotypes added to it.
+a 'MagicGenPhen' object with phenotypes added to initial object.
 }
 \description{
-This function adds phenotypes to an existing 'MagicGen' object. 
+This function adds phenotypes to an existing 'MagicGen' object.
 The genotypes are kept only for those individuals with a genotype.
 }
 \examples{
-...to be added...
+# to be added...
 }

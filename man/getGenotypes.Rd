@@ -2,7 +2,7 @@
 % Please edit documentation in R/01.class-MagicGen-accessors.R
 \name{getGenotypes}
 \alias{getGenotypes}
-\title{Get SNP genotypes}
+\title{Retrieve genotypes from a MagicGen object}
 \usage{
 getGenotypes(x, type = c("probability", "allele"))
 }
