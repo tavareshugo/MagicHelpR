@@ -1,8 +1,9 @@
 # MagicHelpR
 
-A package written mostly for personal convenience to help in performing QTL 
+This package was written mostly for personal convenience to help in performing QTL 
 mapping in the Arabidopsis multiparent advanced generation intercross (MAGIC) 
-lines (described in [Kover P .. Mott R 2009](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551)).
+lines (described in 
+[Kover P .. Mott R 2009](http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551)).
 
 This might however be useful for anyone using the Arabidopsis MAGIC lines. It
 depends Richard Mott's `happy.hbrem` package, available at:
