@@ -31,6 +31,15 @@ stored in a structured object created by the package.
 This vignette introduces the main functions in the package, using a workflow 
 with example phenotype data downloaded from the [MAGIC website](http://mtweb.cs.ucl.ac.uk/mus/www/magic/MAGIC.phenotype.example.12102015.txt).
 
+We start by loading the package, which also loads the package `dplyr`, on which 
+it uses several functions from. Through the rest of this vignette, `dplyr` functions 
+are often used, so it's best if you're familiar with their use and the use of 
+"pipes" `%>%` (see [dplyr introduction](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html))
+
+```{r, warning = FALSE}
+library(MagicHelpR)
+```
+
 
 ## Downloading the data
 
@@ -41,8 +50,7 @@ combines the separate chromosome files into a single file, for convenience).
 Another option, which is set to FALSE by default, is to download example 
 phenotype data.
 
-```{r, warning=FALSE}
-library(MagicHelpR)
+```{r, eval = FALSE}
 downloadArabMagic('~/temp/magic_intro/', tidy = TRUE, example_data = TRUE)
 ```
 
