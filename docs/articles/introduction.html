@@ -265,7 +265,7 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <pre><code>## F-test comparing the models:
 ##   H1: bolt.to.flower ~ GEN
 ##   H0: bolt.to.flower ~ 1</code></pre>
-<pre><code>## Elapsed time: 16 seconds</code></pre>
+<pre><code>## Elapsed time: 15 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(flower_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>() +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/facet_grid">facet_grid</a></span>(~<span class="st"> </span>chromosome, <span class="dt">scales =</span> <span class="st">"free_x"</span>, <span class="dt">space =</span> <span class="st">"free_x"</span>) +
@@ -371,13 +371,13 @@ peak5_effect &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(peak5_effect)</code></pre></div>
 <pre><code>## # A tibble: 6 x 7
 ##   accession effect_mean   effect_up  effect_lo     n      marker allele
-##       &lt;chr&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;chr&gt;  &lt;chr&gt;
-## 1       Bur -0.21319435 -0.19622847 -0.2328602    37 MN5_3177504      T
-## 2       Can  0.75365277  0.87305148  0.5501540     7 MN5_3177504      T
-## 3       Col  0.52004054  0.58496952  0.4458479    15 MN5_3177504      T
-## 4        Ct -0.11656873  0.04075125 -0.2330301    16 MN5_3177504      C
-## 5       Edi  0.63757512  0.88806142  0.3830209     9 MN5_3177504      C
-## 6        Hi -0.08822093 -0.02361345 -0.1405748    37 MN5_3177504      C</code></pre>
+##      &lt;fctr&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;chr&gt;  &lt;chr&gt;
+## 1       Bur -0.21284008 -0.19622847 -0.2328602    37 MN5_3177504      T
+## 2       Can  0.75004105  0.81373026  0.5501540     7 MN5_3177504      T
+## 3       Col  0.51499660  0.56540648  0.4289541    15 MN5_3177504      T
+## 4        Ct -0.11291060  0.02393964 -0.2058631    16 MN5_3177504      C
+## 5       Edi  0.63722987  0.89471421  0.3755001     9 MN5_3177504      C
+## 6        Hi -0.08876933 -0.01617598 -0.1419655    37 MN5_3177504      C</code></pre>
 <p>This returns a <code>data.frame</code> with the predicted contribution of each accession to the phenotype. Because this is probabilistic in nature, the method relies on repeating this estimate several times (500 by default). By default, the <code><a href="../reference/estimateFounderEffect.html">estimateFounderEffect()</a></code> function returns a summary of these probabilistic estimates with a mean and lower and upper “confidence interval” for the estimate.</p>
 <p>By default, it also standardizes the trait as z-scores (i.e. subtracts the mean trait value observed in the sampled individuals from the estimate and divides by the observed standard deviation - in other words, the values can be read as “standard deviations away from the mean”).</p>
 <p>The result can be plotted like so:</p>
