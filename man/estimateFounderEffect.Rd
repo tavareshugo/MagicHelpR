@@ -22,6 +22,12 @@ estimateFounderEffect(x, phenotype, marker, n_samples = 500,
 
 \item{n_samples}{number of Monte Carlo samples to draw.}
 
+\item{summarised}{whether or not to report summarised results. The summarised
+output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
+imputations. The two percentiles define the 95% range of the estimate, which
+can be used as a confidence interval to report accuracy of the estimates.
+Default: TRUE}
+
 \item{standardised}{whether or not the phenotypic values should be standardised
 to the mean. In that case the result reflects how many standard deviations
 the estimated effect deviates from the observed trait mean. Default: TRUE}
@@ -30,12 +36,6 @@ the estimated effect deviates from the observed trait mean. Default: TRUE}
 covariate(s). The effect will be estimated from the residuals of a standard
 linear model between the trait of interest and the specified covariates.
 Default: NULL}
-
-\item{summarise}{whether or not to report summarised results. The summarised
-output gives the mean, median and 2.5% and 97.5% percentiles of the phenotype
-imputations. The two percentiles define the 95% range of the estimate, which
-can be used as a confidence interval to report accuracy of the estimates.
-Default: TRUE}
 }
 \value{
 a data.frame with imputed phenotypes for each founder accession.
