@@ -24,6 +24,7 @@
 #' linear model between the trait of interest and the specified covariates.
 #' Default: NULL
 #'
+#' @export
 #' @rdname estimateFounderEffect
 setGeneric("estimateFounderEffect",
            function(x, phenotype, marker, n_samples = 500,
@@ -35,7 +36,6 @@ setGeneric("estimateFounderEffect",
 
 #' @return a data.frame with imputed phenotypes for each founder accession.
 #' @export
-#' @docType methods
 #' @rdname estimateFounderEffect
 #'
 #' @examples

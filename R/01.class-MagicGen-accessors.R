@@ -8,7 +8,10 @@
 setGeneric("getPhenotypes", function(x) standardGeneric("getPhenotypes"))
 setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 
-#' Get SNP genotypes
+
+
+
+#' Retrieve genotypes from a MagicGen object
 #'
 #' This function can be used to extract the genotypes for all the MAGIC lines in
 #' a MagicGen or MagicGenPhen object. The genotypes can either be the SNP genotypes
@@ -33,7 +36,10 @@ setMethod("getGenotypes", "MagicGen", function(x, type = c("probability", "allel
 	if(type == "allele") return(.getSnpGenotypes(x))
 })
 
+
 #' Retrieve SNP genotypes of the MAGIC lines from a MagicGen object
+#'
+#' This is an internal function called by \code{getGenotypes()}
 #'
 #' @param x an object of class "MagicGen".
 #'
@@ -44,6 +50,8 @@ setMethod(".getSnpGenotypes", "MagicGen", function(x) x@snp_genotypes)
 
 #' Retrieve genotype probabilities for the MAGIC lines from a MagicGen object
 #'
+#' This is an internal function called by \code{getGenotypes()}
+#'
 #' @param x an object of class "MagicGen".
 #'
 #' @return a list of genotype probabilities for every SNP.
@@ -51,15 +59,20 @@ setGeneric(".getProbGenotypes", function(x) standardGeneric(".getProbGenotypes")
 setMethod(".getProbGenotypes", "MagicGen", function(x) x@prob_genotypes)
 
 
+
+
 #' Retrieve SNP genotypes of MAGIC founders from a MagicGen object
 #'
 #' @param x an object of class "MagicGen".
 #'
 #' @return a list of genotypes for each founder accession.
+#'
 #' @export
 #' @rdname getFounderGenotypes
 setGeneric("getFounderGenotypes", function(x) standardGeneric("getFounderGenotypes"))
 setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
+
+
 
 
 #' Retrieve markers from a MagicGen object
@@ -71,6 +84,8 @@ setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
 #' @rdname getMarkers
 setGeneric("getMarkers", function(x) standardGeneric("getMarkers"))
 setMethod("getMarkers", "MagicGen", function(x) x@markers)
+
+
 
 
 # Set show methods

@@ -15,6 +15,7 @@
 #' from a SNP). Default: probability.
 #' @param cores number of cores to use (Windows only supports 1 core). Default: 1
 #'
+#' @export
 #' @rdname scanQtl
 setGeneric("scanQtl", function(x, phenotype, covariates = NULL, marker_cov = NULL,
                                     h1 = NULL, h0 = NULL, perm = 0,
@@ -23,8 +24,8 @@ setGeneric("scanQtl", function(x, phenotype, covariates = NULL, marker_cov = NUL
 
 
 #' @return a data.frame with the QTL results.
+#'
 #' @export
-#' @docType methods
 #' @rdname scanQtl
 #'
 #' @examples

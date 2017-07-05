@@ -4,6 +4,7 @@
 #' @param marker name of SNP marker to infer founder.
 #' @param prob_thr probability threshold for attributing a genotype to a founder.
 #'
+#' @export
 #' @rdname inferMagicFounder
 setGeneric("inferMagicFounder",
            function(x, marker, prob_thr = 0.5)
@@ -11,8 +12,8 @@ setGeneric("inferMagicFounder",
 
 
 #' @return a data.frame with the most likely founder for each MAGIC line.
+#'
 #' @export
-#' @docType methods
 #' @rdname inferMagicFounder
 #'
 #' @examples

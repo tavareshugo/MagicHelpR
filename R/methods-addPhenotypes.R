@@ -15,8 +15,8 @@ setGeneric("addPhenotypes",
 
 
 #' @return a 'MagicGenPhen' object with phenotypes added to initial object.
+#'
 #' @export
-#' @docType methods
 #' @rdname addPhenotypes
 #'
 #' @examples
