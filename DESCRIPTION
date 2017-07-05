@@ -8,6 +8,7 @@ Depends:
     dplyr,
     tidyr,
     methods
+Imports: methods
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
