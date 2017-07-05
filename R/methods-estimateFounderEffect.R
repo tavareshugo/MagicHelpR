@@ -101,7 +101,7 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
                 effect_lo = quantile(effect_standard, 0.025, na.rm = TRUE),
                 n = median(n)) %>%
     	left_join(founder_gen, by = "accession") %>%
-      mutate(accession = reorder(accession, effect_mean)) %>%
+      mutate(accession = reorder(factor(accession), effect_mean)) %>%
       ungroup()
 
 
@@ -117,7 +117,7 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
                 effect_lo = quantile(effect, 0.025, na.rm = TRUE),
                 n = median(n)) %>%
   		left_join(founder_gen, by = "accession") %>%
-      mutate(accession = reorder(accession, effect_mean)) %>%
+      mutate(accession = reorder(factor(accession), effect_mean)) %>%
       ungroup()
   }
 
