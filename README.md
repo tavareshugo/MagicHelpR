@@ -13,6 +13,12 @@ The package implements the same linear model approach in the available
 scripts, but with some more flexibility for specifying models and outputs 
 tabular data that is convenient for downstream analysis and plotting.
 
+In the long term, a better way to carry out these tests is using the 
+[R/qtl2 package](https://github.com/rqtl/qtl2), which is under development, but 
+now supports analysis of the Arabidopsis MAGIC lines (see 
+[here](https://groups.google.com/forum/#!topic/rqtl-disc/pwVi_Igr9zk)). I hope 
+to soon implement some functions to convert the MAGIC genotypes to R/qtl2 format.
+
 To install this package, launch R and issue the following commands:
 
 ```
