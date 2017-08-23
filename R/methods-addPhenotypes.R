@@ -38,7 +38,7 @@ setMethod("addPhenotypes", "MagicGen",
 
             # Check that all IDs exist
             if(any(!(ids %in% rownames(x@prob_genotypes[[1]])))){
-              stop(paste("Some IDs do not have a genotype:", ids[which(!(ids %in% h$subjects))], "\n",
+              stop(paste("Some IDs do not have a genotype:", ids[which(!(ids %in% rownames(x@prob_genotypes[[1]])))], "\n",
                          "Consider removing them from the phenotype table."))
             }
 
