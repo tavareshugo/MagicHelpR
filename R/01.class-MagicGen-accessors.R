@@ -94,7 +94,8 @@ setMethod("show", "MagicGen", function(object){
 
   # Print information
   cat("Object of class", class(object), "\n")
-  cat("Using genotypes for", length(gen), "markers.\n")
+  cat(nrow(getGenotypes(magic_geno)[[1]]), 
+      "MAGIC lines with a genotype at", length(gen), "markers.\n")
 })
 
 setMethod("show", "MagicGenPhen", function(object){
