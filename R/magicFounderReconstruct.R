@@ -17,7 +17,7 @@
 #' @return an object of type "MagicGen" or "MagicGenPhen".
 #' @export
 #' @rdname magicFounderReconstruct
-#'
+#' 
 #' @examples
 #' ...
 magicFounderReconstruct <- function(snp_dir, phenotypes = NULL, id = NULL){
@@ -91,12 +91,22 @@ magicFounderReconstruct <- function(snp_dir, phenotypes = NULL, id = NULL){
   geno_founder <- geno_founder %>%
     filter(marker %in% names(geno_prob)) %>%
     split(.$marker)
+  
+  
+  ##### Get Marker table #####
+  # Extract marker information from the happy object
+  ## Ensure variables are of the right type
+  markers <- h$additive$genome %>% 
+    mutate(marker = as.character(marker),
+           map = as.numeric(map),
+           bp = as.integer(bp),
+           chromosome = as.character(chromosome))
 
 
   ##### Create MagicGen object #####
   # Prepare object of class "MagicGen"
   out <- new("MagicGen",
-             markers = h$additive$genome,
+             markers = markers,
              prob_genotypes = geno_prob,
              snp_genotypes = geno_snp,
              founder_genotypes = geno_founder)
