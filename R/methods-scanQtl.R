@@ -29,7 +29,7 @@ setGeneric("scanQtl", function(x, phenotype, covariates = NULL, marker_cov = NUL
 #' @rdname scanQtl
 #'
 #' @examples
-#' ...
+#' # to be added...
 setMethod("scanQtl", "MagicGenPhen",
           function(x, phenotype, covariates = NULL, marker_cov = NULL,
                    h1 = NULL, h0 = NULL, perm = 0,

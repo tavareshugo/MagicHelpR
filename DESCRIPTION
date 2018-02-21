@@ -5,10 +5,12 @@ Authors@R: person("Hugo", "Tavares", email = "hugo.tavares@slcu.cam.ac.uk", role
 Description: This package contains several functions to perform QTL analysis 
     in the Arabidopsis MAGIC lines.
 Imports:
+    methods,
+    utils,
+    stats,
     dplyr,
     tidyr,
     tibble,
-    methods
 Suggests: 
     tidyverse,
     knitr,

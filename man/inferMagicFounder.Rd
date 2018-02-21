@@ -24,5 +24,5 @@ a data.frame with the most likely founder for each MAGIC line.
 Infer most likely founder for a given SNP
 }
 \examples{
-...
+# to be added...
 }

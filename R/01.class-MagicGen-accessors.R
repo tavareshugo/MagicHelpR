@@ -6,6 +6,8 @@
 #' @export
 #' @rdname getPhenotypes
 setGeneric("getPhenotypes", function(x) standardGeneric("getPhenotypes"))
+
+#' @rdname getPhenotypes
 setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 
 
@@ -24,6 +26,8 @@ setMethod("getPhenotypes", "MagicGenPhen", function(x) x@phenotypes)
 #' @export
 #' @rdname getGenotypes
 setGeneric("getGenotypes", function(x, type = c("probability", "allele")) standardGeneric("getGenotypes"))
+
+#' @rdname getGenotypes
 setMethod("getGenotypes", "MagicGen", function(x, type = c("probability", "allele")){
 
 	# Define which method to use for genotypes
@@ -70,6 +74,8 @@ setMethod(".getProbGenotypes", "MagicGen", function(x) x@prob_genotypes)
 #' @export
 #' @rdname getFounderGenotypes
 setGeneric("getFounderGenotypes", function(x) standardGeneric("getFounderGenotypes"))
+
+#' @rdname getFounderGenotypes
 setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
 
 
@@ -83,6 +89,8 @@ setMethod("getFounderGenotypes", "MagicGen", function(x) x@founder_genotypes)
 #' @export
 #' @rdname getMarkers
 setGeneric("getMarkers", function(x) standardGeneric("getMarkers"))
+
+#' @rdname getMarkers
 setMethod("getMarkers", "MagicGen", function(x) x@markers)
 
 

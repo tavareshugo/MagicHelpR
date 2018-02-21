@@ -19,7 +19,7 @@
 #' @rdname magicFounderReconstruct
 #' 
 #' @examples
-#' ...
+#' # to be added...
 magicFounderReconstruct <- function(snp_dir, phenotypes = NULL, id = NULL){
 
   ##### Check all files #####
