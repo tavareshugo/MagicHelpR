@@ -93,9 +93,9 @@ setMethod("show", "MagicGen", function(object){
   gen <- getGenotypes(object)
 
   # Print information
-  cat("Object of class", class(object), "\n")
-  cat(nrow(getGenotypes(magic_geno)[[1]]), 
-      "MAGIC lines with a genotype at", length(gen), "markers.\n")
+  cat(class(object), "object with:\n")
+  cat("  ", nrow(gen[[1]]), "MAGIC lines\n")
+  cat("  ", length(gen), "markers\n")
 })
 
 setMethod("show", "MagicGenPhen", function(object){
@@ -103,8 +103,8 @@ setMethod("show", "MagicGenPhen", function(object){
   gen <- getGenotypes(object)
 
   # Print information
-  cat("Object of class", class(object), "\n")
-  cat(nrow(phen), "MAGIC lines with a phenotype.\n")
-  cat("There are", ncol(phen)-1, "phenotypes:\n", names(phen[,-1]), "\n")
-  cat("Using genotypes for", length(gen), "markers.\n")
+  cat(class(object), "object with:\n")
+  cat("  ", nrow(gen[[1]]), "MAGIC lines\n")
+  cat("  ", length(gen), "markers\n")
+  cat("  ", ncol(phen)-1, "phenotypes:\n", names(phen[,-1]), "\n")
 })
