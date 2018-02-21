@@ -1,0 +1,159 @@
+---
+title: "Retrieving genes in QTL"
+author: "Hugo Tavares"
+date: "2 August 2017"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to MagicHelpR}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This vignette shows an example of how to retrieve gene lists around QTL of 
+interest. It's still in progress and simply has some ideas of how this might be 
+done.
+
+At the moment there's no method implemented in `MagicHelpR` to define what a 
+QTL peak is (or its confidence interval). In the original MAGIC paper they 
+have a method to define confidence intervals for the QTL, but I could not get 
+my head around it yet.
+
+More naively, one could define a QTL peak as a region within a certain Kb distance 
+from the top SNP. This is the starting point in this vignette (perhaps in the 
+future this will be improved).
+
+# Prepare data
+
+I use the same data shown in the [introduction vignette](https://tavareshugo.github.io/MagicHelpR//articles/introduction.html).
+
+I will use flowering time as an example.
+
+The code to reproduce the analysis shown in that vignette is here for convenience:
+
+```{r, warning = FALSE}
+library(MagicHelpR)
+
+# Download genotype and phenotype example data
+#downloadArabMagic('~/temp/magic_intro/', tidy = TRUE, example_data = TRUE)
+
+# Read phenotype data
+pheno <- read.table('~/temp/magic_intro/magic_phenotype_example.txt', header = T)
+
+# Create the MagicGenPhen object containing genotypes and phenotype
+magic_phen <- magicFounderReconstruct(snp_dir = "~/temp/magic_intro/",
+																			phenotypes = pheno, id = "SUBJECT.NAME")
+
+# QTL scan for days.to.bolt trait
+bolt_qtl <- scanQtl(magic_phen, "days.to.bolt")
+```
+
+This is our QTL plot:
+
+```{r}
+# Load the library and change the default theme
+library(ggplot2); theme_set(theme_bw())
+
+# Make the plot, with an horizontal line at 3.5, which is suggested in Kover et al. (2009)
+ggplot(bolt_qtl, aes(bp/1e6, -log10(p))) +
+  geom_line() +
+  facet_grid(~ chromosome, scales = "free_x", space = "free_x") +
+  geom_hline(yintercept = 3.5, linetype = "dotted")
+```
+
+
+# Retrieving genes around a QTL
+
+Let's say we were interested in which genes are around the peak on Chr4. 
+
+```{r}
+# Filter the data to retain only the peak marker on Chromosome 4
+chr4_peak <- bolt_qtl %>% 
+	filter(chromosome == 4) %>% 
+	arrange(p) %>% 
+	slice(1) %>% 
+	select(marker, bp, chromosome)
+
+chr4_peak
+```
+
+As I said above, at the moment I don't know what the best way is to define 
+where a peak starts and ends. 
+
+However, as a starting point, let's consider all genes within 50Kb of the top 
+SNP on Chr4.
+
+```{r}
+# Add positions for window start and end
+chr4_peak <- chr4_peak %>% 
+	mutate(window_start = bp - 50e3,
+				 window_end = bp + 50e3)
+
+chr4_peak
+```
+
+I will use the package [`biomaRt`](https://bioconductor.org/packages/biomaRt/) 
+to retrieve gene information from 
+[BioMart](www.ensembl.org/biomart).
+
+```{r}
+library("biomaRt")
+
+# List of BioMart plant databases
+listMarts(host="plants.ensembl.org")
+
+# Specify the plants_mart
+m <- useMart("plants_mart", host="plants.ensembl.org")
+
+# Check the Arabidopsis dataset name
+listDatasets(m) %>% filter(grepl("Arabidopsis", description))
+
+# Define dataset
+m <- useMart("plants_mart", host="plants.ensembl.org", dataset="athaliana_eg_gene")
+```
+
+The function `getBM` can then be used to retrieve genes from the BioMart 
+database.
+
+```{r}
+# Download gene list with certain attributes
+## attribute list can be obtained with listAttributes(m)
+biomart_genes <- getBM(attributes=c("tair_locus", "tair_symbol", "external_gene_name",
+                                    "chromosome_name", "start_position", "end_position",
+                                    "description"),
+                       mart=m) %>% 
+  filter(tair_locus != "")  # some attributes have no "tair_locus" ID!
+
+head(biomart_genes)
+```
+
+This table should contain all Arabidopsis genes from BioMart. 
+
+We can then filter it based on our peak QTL:
+
+```{r}
+chr4_genes <- biomart_genes %>% 
+  filter(chromosome_name == chr4_peak$chromosome &
+         start_position > chr4_peak$window_start & 
+           end_position < chr4_peak$window_end)
+```
+
+There's now `r nrow(chr4_genes)` in this list. We can further arrange them by 
+their closeness to our top SNP:
+
+```{r}
+# Get the middle position of each gene and get how far it is from the top SNP
+# arrange by distance and get the first few rows of the table
+chr4_genes %>% 
+	mutate(mid_position = round((start_position + end_position)/2),
+	       dist_snp = abs(mid_position - chr4_peak$bp)) %>% 
+	arrange(dist_snp) %>%
+	head()
+```
+
+In this case, the gene `FRI` is the closest to our top SNP, and it is likely to 
+be a good candidate (as it is involved in flowering).
+

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analyse data from MAGIC lines. • MagicHelpR</title>
+<title>QTL mapping in Arabidopsis MAGIC lines • MagicHelpR</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -47,6 +47,9 @@
 <li>
       <a href="articles/introduction.html">Introduction to MagicHelpR</a>
     </li>
+    <li>
+      <a href="articles/retrieving_genes_in_qtl.html">Retrieving genes in QTL</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -61,19 +64,22 @@
       
       </header><div class="row">
   <div class="contents col-md-9">
-    <div id="magichelpr" class="section level1">
+    
+
+<div id="magichelpr" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#magichelpr" class="anchor"></a>MagicHelpR</h1></div>
-
 <p>This package was written mostly for personal convenience to help in performing QTL mapping in the Arabidopsis multiparent advanced generation intercross (MAGIC) lines (described in <a href="http://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1000551">Kover P .. Mott R 2009</a>).</p>
 <p>This might however be useful for anyone using the Arabidopsis MAGIC lines. It depends Richard Mott’s <code>happy.hbrem</code> package, available at: <a href="http://mtweb.cs.ucl.ac.uk/mus/www/magic/" class="uri">http://mtweb.cs.ucl.ac.uk/mus/www/magic/</a></p>
 <p>The package implements the same linear model approach in the available scripts, but with some more flexibility for specifying models and outputs tabular data that is convenient for downstream analysis and plotting.</p>
+<p>In the long term, a better way to carry out these tests is using the <a href="https://github.com/rqtl/qtl2">R/qtl2 package</a>, which is under development, but now supports analysis of the Arabidopsis MAGIC lines (see <a href="https://groups.google.com/forum/#!topic/rqtl-disc/pwVi_Igr9zk">here</a>). I hope to soon implement some functions to convert the MAGIC genotypes to R/qtl2 format.</p>
 <p>To install this package, launch R and issue the following commands:</p>
 <pre><code><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">#If not already installed, install devtools:
 # install.packages("devtools")
 devtools::install_github("tavareshugo/MagicHelpR")</a></code></pre>
-<p>There’s also a basic <a href="https://tavareshugo.github.io/MagicHelpR/articles/introduction.html">introduction vignette</a>.</p>
+<p>There’s also a basic <a href="https://tavareshugo.github.io/MagicHelpR//articles/introduction.html">introduction vignette</a>.</p>
 </div>
+
   </div>
 
   <div class="col-md-3" id="sidebar">
@@ -83,6 +89,9 @@ devtools::install_github("tavareshugo/MagicHelpR")</a></code></pre>
 <ul class="list-unstyled">
 <li>Hugo Tavares <br><small class="roles"> Author, maintainer </small> </li>
 </ul>
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a></li>
 </ul>
 </div>
 </div>

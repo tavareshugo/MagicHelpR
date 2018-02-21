@@ -47,6 +47,9 @@
 <li>
       <a href="../articles/introduction.html">Introduction to MagicHelpR</a>
     </li>
+    <li>
+      <a href="../articles/retrieving_genes_in_qtl.html">Retrieving genes in QTL</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -65,7 +68,7 @@
       <h1>Introduction to MagicHelpR</h1>
                         <h4 class="author">Hugo Tavares</h4>
             
-            <h4 class="date">2017-07-05</h4>
+            <h4 class="date">2018-02-21</h4>
           </div>
 
     
@@ -86,6 +89,14 @@
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
 <pre><code>## Loading required package: tidyr</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)</code></pre></div>
+<pre><code>## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
+## ✔ tibble  1.4.2          ✔ stringr 1.2.0     
+## ✔ readr   1.1.1          ✔ forcats 0.2.0</code></pre>
+<pre><code>## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
 <div id="downloading-the-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#downloading-the-data" class="anchor"></a>Downloading the data</h2>
@@ -225,7 +236,7 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <pre><code>## F-test comparing the models:
 ##   H1: days.to.bolt ~ GEN
 ##   H0: days.to.bolt ~ 1</code></pre>
-<pre><code>## Elapsed time: 28 seconds</code></pre>
+<pre><code>## Elapsed time: 30 seconds</code></pre>
 <p>The function supports the use of multiple cores (not supported on Windows), which can speed the computation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># QTL scan for days.to.bolt trait</span>
 bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/scanQtl.html">scanQtl</a></span>(magic_phen, <span class="st">"days.to.bolt"</span>, <span class="dt">cores =</span> <span class="dv">2</span>)
@@ -244,10 +255,9 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <p>You can also get the <em>R^2</em> of linear model for the peak markers, which can give an indication of the variance explained by them. For example, the peak marker on Chr4, in the <em>Frigida</em> gene:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bolt_qtl %&gt;%<span class="st"> </span><span class="kw">arrange</span>(p) %&gt;%<span class="st"> </span><span class="kw">slice</span>(<span class="dv">1</span>)</code></pre></div>
 <pre><code>## # A tibble: 1 x 10
-##       marker      map     bp chromosome        f   df1   df2            p
-##   &lt;S3: AsIs&gt;    &lt;dbl&gt;  &lt;dbl&gt; &lt;S3: AsIs&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;        &lt;dbl&gt;
-## 1   FRI_2343 1.128596 270862          4 8.869799    18   407 2.160483e-20
-## # ... with 2 more variables: r2_h1 &lt;dbl&gt;, r2_h0 &lt;dbl&gt;</code></pre>
+##   marker     map     bp chromosome     f   df1   df2         p r2_h1 r2_h0
+##   &lt;I(chr)&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;I(chr)&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 FRI_2343  1.13 270862 4           8.87  18.0   407  2.16e⁻²⁰ 0.250     0</code></pre>
 <p>The <code>r2_h1</code> column contains the <em>R^2</em> of the linear model for the alternative hypothesis tested, suggesting that ~25% of the variance is explained by that SNP.</p>
 </div>
 <div id="custom-models" class="section level2">
@@ -265,7 +275,7 @@ bolt_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../reference/sc
 <pre><code>## F-test comparing the models:
 ##   H1: bolt.to.flower ~ GEN
 ##   H0: bolt.to.flower ~ 1</code></pre>
-<pre><code>## Elapsed time: 15 seconds</code></pre>
+<pre><code>## Elapsed time: 22 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(flower_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>() +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/facet_grid">facet_grid</a></span>(~<span class="st"> </span>chromosome, <span class="dt">scales =</span> <span class="st">"free_x"</span>, <span class="dt">space =</span> <span class="st">"free_x"</span>) +
@@ -279,7 +289,7 @@ bolt_cov_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <pre><code>## F-test comparing the models:
 ##   H1:days.to.bolt ~ GEN + bolt.to.flower
 ##   H0:days.to.bolt ~ bolt.to.flower</code></pre>
-<pre><code>## Elapsed time: 28 seconds</code></pre>
+<pre><code>## Elapsed time: 37 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Make plot</span>
 <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(bolt_cov_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">colour =</span> <span class="st">"covariate"</span>)) +
@@ -304,7 +314,7 @@ bolt_snp_qtl &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 <pre><code>## F-test comparing the models:
 ##   H1:days.to.bolt ~ GEN + MN5_3177504
 ##   H0:days.to.bolt ~ MN5_3177504</code></pre>
-<pre><code>## Elapsed time: 30 seconds</code></pre>
+<pre><code>## Elapsed time: 33 seconds</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Plot</span>
 <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/ggplot">ggplot</a></span>(bolt_snp_qtl, <span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(bp/<span class="fl">1e6</span>, -<span class="kw">log10</span>(p))) +
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/geom_path">geom_line</a></span>(<span class="kw"><a href="http://www.rdocumentation.org/packages/ggplot2/topics/aes">aes</a></span>(<span class="dt">colour =</span> <span class="st">"FRI_2343"</span>)) +
@@ -370,14 +380,14 @@ peak5_effect &lt;-<span class="st"> </span><span class="kw"><a href="../referenc
 ## into character vector</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(peak5_effect)</code></pre></div>
 <pre><code>## # A tibble: 6 x 7
-##   accession effect_mean   effect_up  effect_lo     n      marker allele
-##      &lt;fctr&gt;       &lt;dbl&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;       &lt;chr&gt;  &lt;chr&gt;
-## 1       Bur -0.21284008 -0.19622847 -0.2328602    37 MN5_3177504      T
-## 2       Can  0.75004105  0.81373026  0.5501540     7 MN5_3177504      T
-## 3       Col  0.51499660  0.56540648  0.4289541    15 MN5_3177504      T
-## 4        Ct -0.11291060  0.02393964 -0.2058631    16 MN5_3177504      C
-## 5       Edi  0.63722987  0.89471421  0.3755001     9 MN5_3177504      C
-## 6        Hi -0.08876933 -0.01617598 -0.1419655    37 MN5_3177504      C</code></pre>
+##   accession effect_mean effect_up effect_lo     n marker      allele
+##   &lt;fct&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt; 
+## 1 Bur           -0.213    -0.196     -0.233 37.0  MN5_3177504 T     
+## 2 Can            0.748     0.814      0.550  7.00 MN5_3177504 T     
+## 3 Col            0.517     0.555      0.439 15.0  MN5_3177504 T     
+## 4 Ct            -0.119     0.0366    -0.232 16.0  MN5_3177504 C     
+## 5 Edi            0.635     0.895      0.373  9.00 MN5_3177504 C     
+## 6 Hi            -0.0874   -0.0254    -0.130 37.0  MN5_3177504 C</code></pre>
 <p>This returns a <code>data.frame</code> with the predicted contribution of each accession to the phenotype. Because this is probabilistic in nature, the method relies on repeating this estimate several times (500 by default). By default, the <code><a href="../reference/estimateFounderEffect.html">estimateFounderEffect()</a></code> function returns a summary of these probabilistic estimates with a mean and lower and upper “confidence interval” for the estimate.</p>
 <p>By default, it also standardizes the trait as z-scores (i.e. subtracts the mean trait value observed in the sampled individuals from the estimate and divides by the observed standard deviation - in other words, the values can be read as “standard deviations away from the mean”).</p>
 <p>The result can be plotted like so:</p>
