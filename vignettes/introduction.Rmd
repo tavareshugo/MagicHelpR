@@ -38,6 +38,7 @@ are often used, so it's best if you're familiar with their use and the use of
 
 ```{r, warning = FALSE}
 library(MagicHelpR)
+library(tidyverse)
 ```
 
 

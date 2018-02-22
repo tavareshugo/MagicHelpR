@@ -17,7 +17,7 @@ setGeneric("inferMagicFounder",
 #' @rdname inferMagicFounder
 #'
 #' @examples
-#' ...
+#' # to be added...
 setMethod("inferMagicFounder", "MagicGenPhen",
           function(x, marker, prob_thr = 0.5){
 

@@ -28,5 +28,5 @@ the probability matrix of descent from each founder of the MAGIC lines
 at each marker SNP.
 }
 \examples{
-...
+# to be added...
 }

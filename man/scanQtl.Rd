@@ -44,5 +44,5 @@ a data.frame with the QTL results.
 Make a QTL scan
 }
 \examples{
-...
+# to be added...
 }

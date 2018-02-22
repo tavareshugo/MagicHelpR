@@ -1,18 +1,22 @@
 Package: MagicHelpR
-Title: Analyse data from MAGIC lines.
+Title: QTL mapping in Arabidopsis MAGIC lines
 Version: 0.0.0.9000
 Authors@R: person("Hugo", "Tavares", email = "hugo.tavares@slcu.cam.ac.uk", role = c("aut", "cre"))
-Description: This package contains a series of simple functions to aid in
-    analysing data from Arabidopsis MAGIC lines.
-Depends:
+Description: This package contains several functions to perform QTL analysis 
+    in the Arabidopsis MAGIC lines.
+Imports:
+    methods,
+    utils,
+    stats,
     dplyr,
     tidyr,
-    methods
-Imports: methods
+    tibble,
+Suggests: 
+    tidyverse,
+    knitr,
+    happy.hbrem
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Requires: happy.hbrem
-Suggests: ggplot2,tidyr,knitr
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1

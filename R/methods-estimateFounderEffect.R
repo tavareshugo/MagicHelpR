@@ -39,7 +39,9 @@ setGeneric("estimateFounderEffect",
 #' @rdname estimateFounderEffect
 #'
 #' @examples
-#' ...
+#' \dontrun{
+#' estimateFounderEffect(magic_genotypes, "MN1_29291")
+#' }
 setMethod("estimateFounderEffect", "MagicGenPhen",
           function(x, phenotype, marker, n_samples = 500,
                    summarised = TRUE, standardised = TRUE,

@@ -7,6 +7,8 @@
 #' @param save_dir directory to save all files.
 #' @param tidy whether or not to "tidy" the retrieved files.
 #' This will call the `tidyArabMagic()` function. Default: TRUE
+#' @param example_data logical. Whether or not to download an example phenotype 
+#' data.
 #'
 #' @return files are downloaded to a directory of choice.
 #'

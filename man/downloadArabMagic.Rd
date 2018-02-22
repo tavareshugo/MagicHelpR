@@ -11,6 +11,9 @@ downloadArabMagic(save_dir, tidy = TRUE, example_data = FALSE)
 
 \item{tidy}{whether or not to "tidy" the retrieved files.
 This will call the `tidyArabMagic()` function. Default: TRUE}
+
+\item{example_data}{logical. Whether or not to download an example phenotype 
+data.}
 }
 \value{
 files are downloaded to a directory of choice.

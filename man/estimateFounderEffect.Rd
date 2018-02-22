@@ -49,5 +49,7 @@ on the function \code{imputed.one.way.anova()} from the scripts available at
 http://mtweb.cs.ucl.ac.uk/mus/www/magic/
 }
 \examples{
-...
+\dontrun{
+estimateFounderEffect(magic_genotypes, "MN1_29291")
+}
 }
