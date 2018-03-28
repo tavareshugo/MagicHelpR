@@ -13,7 +13,8 @@ Imports:
     tibble,
 Suggests: 
     tidyverse,
-    knitr,
+    knitr
+SystemRequirements:
     happy.hbrem
 License: GPL-3
 Encoding: UTF-8
