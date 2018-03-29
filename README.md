@@ -28,6 +28,9 @@ To install this package, launch R and issue the following commands:
 #If not already installed, install devtools:
 # install.packages("devtools")
 devtools::install_github("tavareshugo/MagicHelpR")
+
+# If the above fails (it has done for me in Ubuntu), then do this instead
+devtools::install_git("git://github.com/tavareshugo/MagicHelpR.git")
 ```
 
 There's also a basic [introduction vignette](https://tavareshugo.github.io/MagicHelpR//articles/introduction.html).
