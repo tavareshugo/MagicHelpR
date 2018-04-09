@@ -76,7 +76,8 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
     S <- x %*% phen
     mean_pheno <- ifelse(N > 0, S/N, NA)
 
-    data.frame(accession = rownames(S), n = N, effect = mean_pheno)
+    data.frame(accession = rownames(S), n = N, effect = mean_pheno, stringsAsFactors = FALSE)
+    
 
   }, phenotype) %>%
     bind_rows(.id = "rep")
@@ -94,7 +95,7 @@ setMethod("estimateFounderEffect", "MagicGenPhen",
 
   	# Get the founder SNP genotypes and add to output
   	founder_gen <- getFounderGenotypes(x)[[marker]]
-
+  	
   	# Summarise the imputed phenotype
     estimated_effect <- estimated_effect %>%
     group_by(accession) %>%
