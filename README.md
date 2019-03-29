@@ -1,10 +1,11 @@
 [![Project Status: Abandoned – Initial development has started, but there has not yet been a stable, usable release; the project has been abandoned and the author(s) do not intend on continuing development.](https://www.repostatus.org/badges/latest/abandoned.svg)](https://www.repostatus.org/#abandoned)
 [![Build Status](https://travis-ci.org/tavareshugo/MagicHelpR.svg?branch=master)](https://travis-ci.org/tavareshugo/MagicHelpR)
 
-:warning: I would strongly advise using this package! 
+:warning: I would strongly advise against using this package! 
 Instead, you can use the [R/qtl2](https://kbroman.org/qtl2/) for analysis of MAGIC data. 
 For Arabidopsis specifically, I've written a data package ([`atMAGIC`](https://github.com/tavareshugo/atMAGIC)), 
-which provides a `cross2` object to use with that package.
+which provides a `cross2` object to use with that package. Alternatively there's also data 
+available from the [R/qtl2data](https://github.com/rqtl/qtl2data/tree/master/ArabMAGIC) repository.
 
 # MagicHelpR
 
